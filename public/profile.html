@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Gift Platform</title>
+    <link href="/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/libs/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/"><i class="bi bi-gift me-2"></i>Gift Platform</a>
+            <div class="d-flex align-items-center" id="userMenu">
+                <span class="text-light me-3"><i class="bi bi-coin me-1"></i><span id="userPoints">0</span>
+                    Points</span>
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown"><span
+                            id="userName">User</span></button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/gifts.html">Browse Gifts</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item text-danger" href="#" onclick="logout()">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="profile-header text-center">
+        <img src="https://via.placeholder.com/120" alt="Avatar" class="profile-avatar mb-3" id="profileAvatar">
+        <h4 class="fw-bold" id="profileName">Loading...</h4>
+        <p class="opacity-75" id="profileEmail"></p>
+    </div>
+
+    <main class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <!-- Points Card -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h5 class="fw-bold mb-2">Your Points Balance</h5>
+                                    <p class="text-muted mb-0">Use your points to redeem amazing gifts</p>
+                                </div>
+                                <div class="col-md-4 text-md-end">
+                                    <div class="points-display d-inline-block">
+                                        <div class="points-value" id="pointsBalance">0</div>
+                                        <small>Points</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Form -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="fw-bold mb-0">Edit Profile</h5>
+                        </div>
+                        <div class="card-body">
+                            <form onsubmit="updateProfile(event)">
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="editName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" id="editPhone">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Points History -->
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-white border-0 py-3">
+                            <h5 class="fw-bold mb-0">Points History</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-modern mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Description</th>
+                                            <th>Amount</th>
+                                            <th>Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pointsHistory">
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4">
+                                                <div class="spinner-border spinner-border-sm"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!requireAuth()) return;
+            loadProfile();
+            loadPointsHistory();
+        });
+
+        async function loadProfile() {
+            try {
+                const response = await api.get('/users/me');
+                const user = response.data || response;
+
+                document.getElementById('profileName').textContent = user.name;
+                document.getElementById('profileEmail').textContent = user.email;
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('editName').value = user.name;
+                document.getElementById('editPhone').value = user.phone || '';
+                document.getElementById('pointsBalance').textContent = formatNumber(user.pointBalance || 0);
+                document.getElementById('userPoints').textContent = formatNumber(user.pointBalance || 0);
+
+                if (user.avatarUrl) {
+                    document.getElementById('profileAvatar').src = user.avatarUrl;
+                }
+            } catch (error) {
+                showToast('Error loading profile', 'danger');
+            }
+        }
+
+        async function loadPointsHistory() {
+            try {
+                const response = await api.get('/users/me/points/history?limit=10');
+                const history = response.data || [];
+                const tbody = document.getElementById('pointsHistory');
+
+                if (history.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">No transactions yet</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = history.map(h => `
+                    <tr>
+                        <td>${new Date(h.createdAt).toLocaleDateString()}</td>
+                        <td>${h.description}</td>
+                        <td class="${h.transactionType === 'credit' ? 'text-success' : 'text-danger'}">
+                            ${h.transactionType === 'credit' ? '+' : ''}${formatNumber(h.amount)}
+                        </td>
+                        <td>${formatNumber(h.balanceAfter)}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        async function updateProfile(event) {
+            event.preventDefault();
+            try {
+                await api.put('/users/me', {
+                    name: document.getElementById('editName').value,
+                    phone: document.getElementById('editPhone').value,
+                });
+                showToast('Profile updated successfully!', 'success');
+                loadProfile();
+            } catch (error) {
+                showToast(error.message, 'danger');
+            }
+        }
+    </script>
+</body>
+
+</html>
