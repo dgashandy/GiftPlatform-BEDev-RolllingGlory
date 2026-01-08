@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Gift Platform</title>
+    <link href="/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/libs/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+    <div class="min-vh-100 d-flex align-items-center py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="text-center mb-4">
+                        <a href="/" class="text-decoration-none">
+                            <h2 class="text-primary fw-bold"><i class="bi bi-gift me-2"></i>Gift Platform</h2>
+                        </a>
+                    </div>
+                    <div class="card auth-card border-0">
+                        <div class="card-body p-5">
+                            <h4 class="text-center fw-bold mb-2">Create Account</h4>
+                            <p class="text-center text-muted mb-4">Get <strong class="text-success">1000 bonus
+                                    points</strong> when you sign up!</p>
+
+                            <form onsubmit="handleRegister(event)">
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="name" required
+                                        placeholder="Enter your name" minlength="2">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" required
+                                        placeholder="Enter your email">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="password" required
+                                        placeholder="Create a password" minlength="6">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" id="confirmPassword" required
+                                        placeholder="Confirm your password" minlength="6">
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 py-3 mb-3">
+                                    Create Account
+                                </button>
+                            </form>
+
+                            <div class="text-center mb-3">
+                                <span class="text-muted">or</span>
+                            </div>
+
+                            <a href="/auth/google" class="btn btn-outline-secondary w-100 py-3 mb-4">
+                                <img src="https://www.google.com/favicon.ico" alt="Google" width="20" class="me-2">
+                                Sign up with Google
+                            </a>
+
+                            <p class="text-center text-muted mb-0">
+                                Already have an account? <a href="/login.html" class="text-primary">Login</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+</body>
+
+</html>
