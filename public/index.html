@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Platform - Redeem Your Points</title>
+    <meta name="description" content="Discover amazing gifts and redeem your points for exciting rewards">
+    <link href="/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/libs/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="bi bi-gift me-2"></i>Gift Platform
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/gifts.html">Gifts</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center" id="authButtons">
+                    <a href="/login.html" class="btn btn-outline-light me-2">Login</a>
+                    <a href="/register.html" class="btn btn-light">Register</a>
+                </div>
+                <div class="d-flex align-items-center d-none" id="userMenu">
+                    <span class="text-light me-3">
+                        <i class="bi bi-coin me-1"></i>
+                        <span id="userPoints">0</span> Points
+                    </span>
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i>
+                            <span id="userName">User</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile.html"><i
+                                        class="bi bi-person me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="/redemptions.html"><i class="bi bi-bag me-2"></i>My
+                                    Redemptions</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i
+                                        class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section bg-gradient-primary text-white py-5">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">Redeem Your Points for Amazing Gifts</h1>
+                    <p class="lead mb-4">Browse our exclusive collection of gifts and use your points to get what you
+                        love.</p>
+                    <div class="d-flex gap-3">
+                        <a href="/gifts.html" class="btn btn-light btn-lg px-4">
+                            <i class="bi bi-gift me-2"></i>Browse Gifts
+                        </a>
+                        <a href="/register.html" class="btn btn-outline-light btn-lg px-4">
+                            Get 1000 Free Points
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600" alt="Gifts"
+                        class="img-fluid rounded-4 shadow-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">How It Works</h2>
+                <p class="text-muted">Simple steps to get your rewards</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+                        <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mx-auto mb-4">
+                            <i class="bi bi-person-plus fs-3"></i>
+                        </div>
+                        <h5>Sign Up</h5>
+                        <p class="text-muted mb-0">Create your account and get 1000 bonus points instantly!</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+                        <div class="feature-icon bg-success bg-gradient text-white rounded-circle mx-auto mb-4">
+                            <i class="bi bi-search fs-3"></i>
+                        </div>
+                        <h5>Browse Gifts</h5>
+                        <p class="text-muted mb-0">Explore our exclusive collection of gifts and find your favorites.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+                        <div class="feature-icon bg-warning bg-gradient text-white rounded-circle mx-auto mb-4">
+                            <i class="bi bi-bag-check fs-3"></i>
+                        </div>
+                        <h5>Redeem</h5>
+                        <p class="text-muted mb-0">Use your points to redeem gifts and enjoy your rewards!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold mb-0">Featured Gifts</h2>
+                <a href="/gifts.html" class="btn btn-outline-primary">View All</a>
+            </div>
+            <div class="row g-4" id="featuredGifts">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-gift me-2"></i>Gift Platform</h5>
+                    <p class="text-muted">Redeem your points for amazing gifts. We offer a wide selection of quality
+                        products.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white fs-5"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white fs-5"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-white fs-5"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h6 class="fw-bold mb-3">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/" class="text-muted text-decoration-none">Home</a></li>
+                        <li class="mb-2"><a href="/gifts.html" class="text-muted text-decoration-none">Gifts</a></li>
+                        <li class="mb-2"><a href="/about.html" class="text-muted text-decoration-none">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h6 class="fw-bold mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/faq.html" class="text-muted text-decoration-none">FAQ</a></li>
+                        <li class="mb-2"><a href="/contact.html" class="text-muted text-decoration-none">Contact</a>
+                        </li>
+                        <li class="mb-2"><a href="/terms.html" class="text-muted text-decoration-none">Terms &
+                                Conditions</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <h6 class="fw-bold mb-3">Contact Us</h6>
+                    <ul class="list-unstyled text-muted">
+                        <li class="mb-2"><i class="bi bi-envelope me-2"></i>support@giftplatform.com</li>
+                        <li class="mb-2"><i class="bi bi-telephone me-2"></i>+62 21 1234 5678</li>
+                        <li class="mb-2"><i class="bi bi-geo-alt me-2"></i>Jakarta, Indonesia</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary">
+            <div class="text-center text-muted">
+                <p class="mb-0">© 2026 Gift Platform. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal fade" id="welcomeModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-gift display-1 text-primary"></i>
+                    </div>
+                    <h3 class="fw-bold mb-3">Welcome to Gift Platform! 🎉</h3>
+                    <p class="text-muted mb-4">Congratulations! You've received <strong class="text-success">1,000 bonus
+                            points</strong> for joining us!</p>
+                    <div class="bg-light rounded-3 p-4 mb-4">
+                        <h2 class="text-success fw-bold mb-0">
+                            <i class="bi bi-coin me-2"></i>1,000 Points
+                        </h2>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-lg px-5" data-bs-dismiss="modal">
+                        Start Browsing Gifts
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            checkAuth();
+            loadFeaturedGifts();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('welcome') === 'true') {
+                const modal = new bootstrap.Modal(document.getElementById('welcomeModal'));
+                modal.show();
+                window.history.replaceState({}, document.title, '/');
+            }
+        });
+
+        async function loadFeaturedGifts() {
+            try {
+                const response = await api.get('/gifts?limit=4&sortBy=rating&order=DESC');
+                const container = document.getElementById('featuredGifts');
+
+                if (response.data && response.data.length > 0) {
+                    container.innerHTML = response.data.map(gift => createGiftCard(gift)).join('');
+                } else {
+                    container.innerHTML = '<div class="col-12 text-center py-5"><p class="text-muted">No gifts available yet.</p></div>';
+                }
+            } catch (error) {
+                console.error('Error loading gifts:', error);
+            }
+        }
+
+        function createGiftCard(gift) {
+            const stars = renderStars(gift.starRating || 0);
+            const stockBadge = gift.inStock
+                ? '<span class="badge bg-success">In Stock</span>'
+                : '<span class="badge bg-danger">Sold Out</span>';
+
+            return `
+                <div class="col-md-6 col-lg-3">
+                    <div class="card h-100 gift-card border-0 shadow-sm">
+                        <img src="${gift.imageUrl || 'https://via.placeholder.com/300x200?text=Gift'}" class="card-img-top" alt="${gift.name}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-light text-dark">${gift.categoryName || 'General'}</span>
+                                ${stockBadge}
+                            </div>
+                            <h6 class="card-title fw-bold">${gift.name}</h6>
+                            <div class="d-flex align-items-center mb-2">
+                                ${stars}
+                                <small class="text-muted ms-2">(${gift.totalReviews} reviews)</small>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold text-primary">
+                                    <i class="bi bi-coin me-1"></i>${gift.pointsRequired.toLocaleString()} pts
+                                </span>
+                                <a href="/gift-detail.html?id=${gift.id}" class="btn btn-sm btn-outline-primary">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStars(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5;
+            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+            let html = '';
+            for (let i = 0; i < fullStars; i++) {
+                html += '<i class="bi bi-star-fill text-warning"></i>';
+            }
+            if (halfStar) {
+                html += '<i class="bi bi-star-half text-warning"></i>';
+            }
+            for (let i = 0; i < emptyStars; i++) {
+                html += '<i class="bi bi-star text-warning"></i>';
+            }
+            return html;
+        }
+    </script>
+</body>
+
+</html>
