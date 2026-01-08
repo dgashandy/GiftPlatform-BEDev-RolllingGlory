@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Detail - Gift Platform</title>
+    <link href="/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/libs/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/"><i class="bi bi-gift me-2"></i>Gift Platform</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/gifts.html">Gifts</a></li>
+                </ul>
+                <div class="d-flex align-items-center" id="authButtons">
+                    <a href="/login.html" class="btn btn-outline-light me-2">Login</a>
+                    <a href="/register.html" class="btn btn-light">Register</a>
+                </div>
+                <div class="d-flex align-items-center d-none" id="userMenu">
+                    <span class="text-light me-3"><i class="bi bi-coin me-1"></i><span id="userPoints">0</span>
+                        Points</span>
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <span id="userName">User</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile.html">Profile</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="logout()">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="py-5">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/gifts.html">Gifts</a></li>
+                    <li class="breadcrumb-item active" id="breadcrumbTitle">Loading...</li>
+                </ol>
+            </nav>
+
+            <div class="row" id="giftContent">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">© 2026 Gift Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        let gift = null;
+        let quantity = 1;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadGift();
+        });
+
+        async function loadGift() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+
+            if (!id) {
+                window.location.href = '/gifts.html';
+                return;
+            }
+
+            try {
+                const response = await api.get(`/gifts/${id}`);
+                gift = response.data || response;
+                renderGift(gift);
+            } catch (error) {
+                document.getElementById('giftContent').innerHTML = `
+                    <div class="col-12 empty-state">
+                        <i class="bi bi-x-circle text-danger"></i>
+                        <h5>Gift not found</h5>
+                        <a href="/gifts.html" class="btn btn-primary mt-3">Browse Gifts</a>
+                    </div>
+                `;
+            }
+        }
+
+        function renderGift(gift) {
+            document.getElementById('breadcrumbTitle').textContent = gift.name;
+            document.title = `${gift.name} - Gift Platform`;
+
+            const stockBadge = gift.inStock
+                ? '<span class="badge bg-success fs-6">In Stock</span>'
+                : '<span class="badge bg-danger fs-6">Sold Out</span>';
+
+            document.getElementById('giftContent').innerHTML = `
+                <div class="col-lg-6 mb-4">
+                    <div class="gift-detail-image">
+                        <img src="${gift.imageUrl || 'https://via.placeholder.com/600x400?text=Gift'}" alt="${gift.name}" class="img-fluid">
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <span class="badge bg-light text-dark mb-2">${gift.categoryName || 'General'}</span>
+                    ${stockBadge}
+                    
+                    <h2 class="fw-bold mt-3 mb-3">${gift.name}</h2>
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        ${renderStars(gift.starRating || 0)}
+                        <span class="ms-2 text-muted">(${gift.totalReviews} reviews)</span>
+                    </div>
+                    
+                    <div class="bg-light rounded-3 p-4 mb-4">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span class="text-muted">Points Required</span>
+                            <span class="fs-3 fw-bold text-primary">
+                                <i class="bi bi-coin me-1"></i>${formatNumber(gift.pointsRequired)}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-muted mb-4">${gift.description || 'No description available.'}</p>
+                    
+                    ${gift.inStock ? `
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Quantity (Stock: ${gift.stock})</label>
+                            <div class="quantity-selector">
+                                <button onclick="updateQuantity(-1)">-</button>
+                                <input type="number" id="quantity" value="1" min="1" max="${gift.stock}" readonly>
+                                <button onclick="updateQuantity(1)">+</button>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary btn-lg w-100 py-3" onclick="redeemGift()">
+                            <i class="bi bi-bag-check me-2"></i>Redeem Now
+                        </button>
+                    ` : `
+                        <button class="btn btn-secondary btn-lg w-100 py-3" disabled>
+                            <i class="bi bi-x-circle me-2"></i>Out of Stock
+                        </button>
+                    `}
+                </div>
+                
+                <div class="col-12 mt-5">
+                    <h4 class="fw-bold mb-4">Recent Reviews</h4>
+                    <div class="row g-4" id="reviewsList">
+                        ${gift.recentRatings && gift.recentRatings.length > 0 ?
+                    gift.recentRatings.map(r => `
+                                <div class="col-md-6">
+                                    <div class="card border-0 shadow-sm p-3">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <div class="bg-primary text-white rounded-circle me-3" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                            <div>
+                                                <strong>${r.userName || 'Anonymous'}</strong>
+                                                <div>${renderStars(r.stars)}</div>
+                                            </div>
+                                        </div>
+                                        <p class="mb-0 text-muted">${r.review || 'No review text provided.'}</p>
+                                    </div>
+                                </div>
+                            `).join('')
+                    : '<div class="col-12"><p class="text-muted">No reviews yet.</p></div>'
+                }
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateQuantity(delta) {
+            const input = document.getElementById('quantity');
+            const newValue = parseInt(input.value) + delta;
+            if (newValue >= 1 && newValue <= gift.stock) {
+                input.value = newValue;
+                quantity = newValue;
+            }
+        }
+
+        async function redeemGift() {
+            if (!isLoggedIn()) {
+                showToast('Please login to redeem gifts', 'warning');
+                window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.href)}`;
+                return;
+            }
+
+            const qty = parseInt(document.getElementById('quantity').value);
+
+            try {
+                const response = await api.post(`/gifts/${gift.id}/redeem`, { quantity: qty });
+                showToast(response.message || response.data?.message || 'Gift redeemed successfully!', 'success');
+                loadUserPoints();
+                loadGift();
+            } catch (error) {
+                showToast(error.message, 'danger');
+            }
+        }
+    </script>
+</body>
+
+</html>
