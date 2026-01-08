@@ -108,20 +108,83 @@ async function handleRegister(event) {
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating account...';
 
         const response = await api.post('/auth/register', { name, email, password });
+        const data = response.data || response;
 
-        setUser(response.data?.user || response.user, {
-            accessToken: response.data?.accessToken || response.accessToken,
-            refreshToken: response.data?.refreshToken || response.refreshToken,
-        });
-
-        showToast('Registration successful! You got 1000 bonus points!', 'success');
-
-        window.location.href = '/?welcome=true';
+        if (data.requiresVerification) {
+            showOtpForm(data.email);
+            showToast('Check your email for the verification code!', 'success');
+        } else {
+            setUser(data.user, {
+                accessToken: data.accessToken,
+                refreshToken: data.refreshToken,
+            });
+            showToast('Registration successful! You got 1000 bonus points!', 'success');
+            window.location.href = '/?welcome=true';
+        }
 
     } catch (error) {
         showToast(error.message, 'danger');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Create Account';
+    }
+}
+
+function showOtpForm(email) {
+    const formContainer = document.querySelector('.auth-card .card-body');
+    formContainer.innerHTML = `
+        <div class="text-center mb-4">
+            <i class="bi bi-envelope-check fs-1 text-primary"></i>
+            <h4 class="mt-3">Verify Your Email</h4>
+            <p class="text-muted">We sent a verification code to<br><strong>${email}</strong></p>
+        </div>
+        <form onsubmit="handleVerifyOtp(event, '${email}')">
+            <div class="mb-4">
+                <label class="form-label">Enter 6-digit OTP</label>
+                <input type="text" class="form-control form-control-lg text-center" id="otpCode" 
+                    maxlength="6" pattern="[0-9]{6}" placeholder="000000" required 
+                    style="letter-spacing: 8px; font-size: 24px;">
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">Verify Email</button>
+            <div class="text-center mt-3">
+                <button type="button" class="btn btn-link" onclick="resendOtp('${email}')">Resend Code</button>
+            </div>
+        </form>
+    `;
+}
+
+async function handleVerifyOtp(event, email) {
+    event.preventDefault();
+    const otp = document.getElementById('otpCode').value;
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+
+    try {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Verifying...';
+
+        const response = await api.post('/auth/verify-otp', { email, otp });
+        const data = response.data || response;
+
+        setUser(data.user, {
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+        });
+
+        showToast('Email verified! You got 1000 bonus points!', 'success');
+        window.location.href = '/?welcome=true';
+
+    } catch (error) {
+        showToast(error.message, 'danger');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Verify Email';
+    }
+}
+
+async function resendOtp(email) {
+    try {
+        await api.post('/auth/request-otp', { email });
+        showToast('New verification code sent!', 'success');
+    } catch (error) {
+        showToast(error.message, 'danger');
     }
 }
 

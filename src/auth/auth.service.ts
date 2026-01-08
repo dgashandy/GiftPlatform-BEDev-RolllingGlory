@@ -101,6 +101,9 @@ export class AuthService {
 
         const passwordHash = await bcrypt.hash(registerDto.password, 10);
 
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
         const [newUser] = await this.db
             .insert(schema.users)
             .values({
@@ -110,6 +113,8 @@ export class AuthService {
                 phone: registerDto.phone,
                 roleId: userRole.id,
                 isVerified: false,
+                otpCode: otp,
+                otpExpiresAt,
             })
             .returning();
 
@@ -121,23 +126,23 @@ export class AuthService {
             description: 'Welcome bonus - New user registration',
         });
 
-        const tokens = await this.generateTokens(newUser.id, newUser.email, newUser.roleId, userRole.name);
-
-        await this.db
-            .update(schema.users)
-            .set({ refreshToken: tokens.refreshToken })
-            .where(eq(schema.users.id, newUser.id));
+        await this.transporter.sendMail({
+            from: this.configService.get('MAIL_FROM'),
+            to: newUser.email,
+            subject: 'Verify Your Email - Gift Platform',
+            html: `
+                <h1>Welcome to Gift Platform!</h1>
+                <p>Thank you for registering. Please verify your email with this OTP code:</p>
+                <h2 style="font-size: 32px; letter-spacing: 5px; color: #6366f1;">${otp}</h2>
+                <p>This code expires in 10 minutes.</p>
+                <p>You'll receive <strong>1000 bonus points</strong> once verified!</p>
+            `,
+        });
 
         return {
-            user: {
-                id: newUser.id,
-                email: newUser.email,
-                name: newUser.name,
-                role: userRole.name,
-                isNewUser: true,
-                bonusPoints: 1000,
-            },
-            ...tokens,
+            message: 'Registration successful. Please check your email for OTP verification.',
+            email: newUser.email,
+            requiresVerification: true,
         };
     }
 

@@ -14,15 +14,21 @@ import { GiftsModule } from './gifts';
       envFilePath: '.env',
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), 'public'),
-    }),
-    ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'node_modules/bootstrap/dist'),
       serveRoot: '/libs/bootstrap',
+      serveStaticOptions: {
+        index: false,
+      },
     }),
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'node_modules/bootstrap-icons'),
       serveRoot: '/libs/bootstrap-icons',
+      serveStaticOptions: {
+        index: false,
+      },
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'public'),
     }),
     DatabaseModule,
     AuthModule,
