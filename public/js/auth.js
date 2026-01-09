@@ -161,7 +161,7 @@ async function handleVerifyOtp(event, email) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Verifying...';
 
-        const response = await api.post('/auth/verify-otp', { email, otp });
+        const response = await api.post('/auth/otp/verify', { email, otp });
         const data = response.data || response;
 
         setUser(data.user, {
@@ -181,7 +181,7 @@ async function handleVerifyOtp(event, email) {
 
 async function resendOtp(email) {
     try {
-        await api.post('/auth/request-otp', { email });
+        await api.post('/auth/otp/request', { email });
         showToast('New verification code sent!', 'success');
     } catch (error) {
         showToast(error.message, 'danger');

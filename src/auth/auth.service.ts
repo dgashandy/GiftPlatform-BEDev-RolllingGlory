@@ -194,6 +194,21 @@ export class AuthService {
                     description: 'Welcome bonus - New user registration',
                 });
 
+                await this.transporter.sendMail({
+                    from: this.configService.get('MAIL_FROM'),
+                    to: user.email,
+                    subject: 'Welcome to Gift Platform!',
+                    html: `
+                        <h1>Welcome, ${user.name}!</h1>
+                        <p>Your account has been successfully created using Google Sign-In.</p>
+                        <p>As a welcome gift, we've credited <strong>1000 bonus points</strong> to your account!</p>
+                        <p>Start exploring our gift catalog and redeem exciting rewards.</p>
+                        <br>
+                        <p>Happy shopping!</p>
+                        <p>- The Gift Platform Team</p>
+                    `,
+                });
+
                 isNewUser = true;
             }
         }

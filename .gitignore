@@ -1,23 +1,12 @@
-# Dependencies
 node_modules/
-
-# Build
 dist/
-
-# Environment
 .env
-
-# IDE
 .idea/
 .vscode/
-
-# OS
 .DS_Store
 Thumbs.db
-
-# Logs
 *.log
 npm-debug.log*
-
-# Coverage
+docker-compose.yml
+docker-compose.prod.yml
 coverage/

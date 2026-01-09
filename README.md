@@ -19,25 +19,25 @@ A gift redemption platform API built with NestJS, Drizzle ORM, and PostgreSQL.
 
 ---
 
-## Development
+## Development Setup
 
 ```bash
-# Start PostgreSQL container
+# 1. Start PostgreSQL container
 docker-compose up -d
 
-# Install dependencies
+# 2. Install dependencies
 npm install
 
-# Setup environment (copy and edit as needed)
+# 3. Setup environment (copy and edit as needed)
 cp .env.example .env
 
-# Push database schema
+# 4. Push database schema
 npm run db:push
 
-# Seed database with sample data
+# 5. Seed database with sample data
 npm run db:seed
 
-# Start development server (watch mode)
+# 6. Start development server (watch mode)
 npm run start:dev
 ```
 
@@ -49,14 +49,54 @@ Open http://localhost:3000
 
 ---
 
-## Production
+## Production Setup
+
+### Option 1: Full Docker (Recommended)
 
 ```bash
-# Build and run all containers (PostgreSQL + API)
+# 1. Build and start all containers (PostgreSQL + API)
 docker-compose -f docker-compose.prod.yml up -d --build
 
-# View logs
+# 2. Wait for database to be ready (check logs)
+docker-compose -f docker-compose.prod.yml logs -f postgres
+
+# 3. Run database migrations (inside API container)
+docker exec gift_platform_api npm run db:push
+
+# 4. Seed the database (inside API container)
+docker exec gift_platform_api npm run db:seed
+```
+
+### Option 2: Docker DB + Local API
+
+```bash
+# 1. Start only PostgreSQL in Docker
+docker-compose up -d
+
+# 2. Build the app
+npm run build
+
+# 3. Push database schema
+npm run db:push
+
+# 4. Seed the database
+npm run db:seed
+
+# 5. Start production server
+npm run start:prod
+```
+
+### Production Commands
+
+```bash
+# View API logs
 docker-compose -f docker-compose.prod.yml logs -f api
+
+# View database logs
+docker-compose -f docker-compose.prod.yml logs -f postgres
+
+# Restart API after code changes
+docker-compose -f docker-compose.prod.yml up -d --build api
 
 # Stop all services
 docker-compose -f docker-compose.prod.yml down
@@ -86,16 +126,18 @@ docker-compose -f docker-compose.prod.yml down -v
 
 ### Authentication
 - `POST /auth/login` - Login
-- `POST /auth/register` - Register
+- `POST /auth/register` - Register (sends OTP email)
+- `POST /auth/otp/verify` - Verify OTP
+- `POST /auth/otp/request` - Request new OTP
 - `POST /auth/logout` - Logout
 - `POST /auth/refresh` - Refresh token
 - `GET /auth/google` - Google OAuth
 
 ### Users
-- `GET /users/profile` - Get profile
-- `PUT /users/profile` - Update profile
-- `POST /users/change-password` - Change password
-- `GET /users/points` - Get point balance
+- `GET /users/me` - Get profile
+- `PUT /users/me` - Update profile
+- `POST /users/me/change-password` - Change password
+- `GET /users/me/points` - Get point balance
 
 ### Gifts
 - `GET /gifts` - List gifts (paginated)
