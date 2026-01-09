@@ -31,11 +31,17 @@
                             <span id="userName">User</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/profile.html">Profile</a></li>
+                            <li><a class="dropdown-item" href="/profile.html"><i
+                                        class="bi bi-person me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="/redemptions.html"><i class="bi bi-bag me-2"></i>My
+                                    Redemptions</a></li>
+                            <li id="adminLink" class="d-none"><a class="dropdown-item" href="/admin/gifts.html"><i
+                                        class="bi bi-gear me-2"></i>Admin Panel</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item text-danger" href="#" onclick="logout()">Logout</a></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i
+                                        class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                         </ul>
                     </div>
                 </div>
@@ -76,8 +82,17 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             checkAuth();
+            showAdminLinkIfNeeded();
             loadGift();
         });
+
+        function showAdminLinkIfNeeded() {
+            const user = getUser();
+            if (user && (user.role === 'admin' || user.role === 'support')) {
+                const adminLink = document.getElementById('adminLink');
+                if (adminLink) adminLink.classList.remove('d-none');
+            }
+        }
 
         async function loadGift() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -111,10 +126,12 @@
                 ? '<span class="badge bg-success fs-6">In Stock</span>'
                 : '<span class="badge bg-danger fs-6">Sold Out</span>';
 
+            const imageUrl = gift.imageUrl || '/assets/image.jpg';
+
             document.getElementById('giftContent').innerHTML = `
                 <div class="col-lg-6 mb-4">
                     <div class="gift-detail-image">
-                        <img src="${gift.imageUrl || 'https://via.placeholder.com/600x400?text=Gift'}" alt="${gift.name}" class="img-fluid">
+                        <img src="${imageUrl}" alt="${gift.name}" class="img-fluid" onerror="this.src='/assets/image.jpg'">
                     </div>
                 </div>
                 <div class="col-lg-6">
@@ -149,9 +166,14 @@
                             </div>
                         </div>
                         
-                        <button class="btn btn-primary btn-lg w-100 py-3" onclick="redeemGift()">
-                            <i class="bi bi-bag-check me-2"></i>Redeem Now
-                        </button>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg py-3" onclick="redeemGift()">
+                                <i class="bi bi-bag-check me-2"></i>Redeem Now
+                            </button>
+                            <button class="btn btn-outline-primary btn-lg py-3" onclick="addToCart()">
+                                <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                            </button>
+                        </div>
                     ` : `
                         <button class="btn btn-secondary btn-lg w-100 py-3" disabled>
                             <i class="bi bi-x-circle me-2"></i>Out of Stock
@@ -212,6 +234,52 @@
             } catch (error) {
                 showToast(error.message, 'danger');
             }
+        }
+
+        function addToCart() {
+            if (!isLoggedIn()) {
+                showToast('Please login to add items to cart', 'warning');
+                window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.href)}`;
+                return;
+            }
+
+            const qty = parseInt(document.getElementById('quantity').value);
+
+            // Get existing cart from localStorage
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+            // Check if item already in cart
+            const existingIndex = cart.findIndex(item => item.giftId === gift.id);
+
+            if (existingIndex >= 0) {
+                // Update quantity (don't exceed stock)
+                const newQty = Math.min(cart[existingIndex].quantity + qty, gift.stock);
+                cart[existingIndex].quantity = newQty;
+                cart[existingIndex].gift = gift; // Update gift details
+            } else {
+                // Add new item
+                cart.push({
+                    giftId: gift.id,
+                    quantity: qty,
+                    gift: {
+                        id: gift.id,
+                        name: gift.name,
+                        imageUrl: gift.imageUrl,
+                        pointsRequired: gift.pointsRequired,
+                        stock: gift.stock
+                    }
+                });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+            showToast(`Added ${qty}x ${gift.name} to cart!`, 'success');
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            // Cart badge will be updated on pages that have it
         }
     </script>
 </body>

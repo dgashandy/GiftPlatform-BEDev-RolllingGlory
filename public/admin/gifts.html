@@ -132,10 +132,6 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Image URL</label>
-                            <input type="url" class="form-control" id="giftImageUrl" placeholder="https://...">
-                        </div>
                         <button type="submit" class="btn btn-primary w-100">Save Gift</button>
                     </form>
                 </div>
@@ -161,6 +157,12 @@
             }
 
             document.getElementById('userName').textContent = user.name || user.email;
+
+            // Show dashboard link only for admin
+            if (user.role !== 'admin') {
+                const adminOnlyLink = document.getElementById('adminOnlyLink');
+                if (adminOnlyLink) adminOnlyLink.classList.add('d-none');
+            }
 
             giftModal = new bootstrap.Modal(document.getElementById('giftModal'));
             document.getElementById('giftForm').addEventListener('submit', handleSaveGift);
@@ -207,8 +209,8 @@
             tbody.innerHTML = gifts.map(gift => `
                 <tr>
                     <td>
-                        <img src="${gift.imageUrl || 'https://via.placeholder.com/50x50?text=Gift'}" 
-                            alt="${gift.name}" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                        <img src="${gift.imageUrl || '/assets/image.jpg'}" 
+                            alt="${gift.name}" class="rounded" style="width: 50px; height: 50px; object-fit: cover;" onerror="this.src='/assets/image.jpg'">
                     </td>
                     <td><strong>${gift.name}</strong></td>
                     <td>${gift.categoryName || '-'}</td>
@@ -252,7 +254,6 @@
                 document.getElementById('giftCategory').value = gift.categoryId || '';
                 document.getElementById('giftPoints').value = gift.pointsRequired;
                 document.getElementById('giftStock').value = gift.stock;
-                document.getElementById('giftImageUrl').value = gift.imageUrl || '';
                 document.getElementById('giftStatus').value = gift.isActive ? 'true' : 'false';
 
                 giftModal.show();
@@ -271,7 +272,6 @@
                 categoryId: document.getElementById('giftCategory').value || undefined,
                 pointsRequired: parseInt(document.getElementById('giftPoints').value),
                 stock: parseInt(document.getElementById('giftStock').value),
-                imageUrl: document.getElementById('giftImageUrl').value || undefined,
                 isActive: document.getElementById('giftStatus').value === 'true',
             };
 

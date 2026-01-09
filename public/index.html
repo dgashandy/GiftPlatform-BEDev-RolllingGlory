@@ -75,8 +75,8 @@
                     </div>
                 </div>
                 <div class="col-lg-6 text-center">
-                    <img src="https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600" alt="Gifts"
-                        class="img-fluid rounded-4 shadow-lg">
+                    <img src="/assets/image.jpg" alt="Gifts" class="img-fluid rounded-4 shadow-lg"
+                        onerror="this.src='https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600'">
                 </div>
             </div>
         </div>
@@ -99,7 +99,11 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4"
+                        style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;"
+                        onclick="window.location.href='/gifts.html'"
+                        onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 .5rem 1rem rgba(0,0,0,.15)'"
+                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 .125rem .25rem rgba(0,0,0,.075)'">
                         <div class="feature-icon bg-success bg-gradient text-white rounded-circle mx-auto mb-4">
                             <i class="bi bi-search fs-3"></i>
                         </div>

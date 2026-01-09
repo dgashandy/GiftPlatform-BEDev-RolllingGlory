@@ -14,36 +14,26 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="bi bi-gift me-2"></i>Gift Platform
-            </a>
+            <a class="navbar-brand fw-bold" href="/"><i class="bi bi-gift me-2"></i>Gift Platform</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/gifts.html">Gifts</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/redemptions.html">My Redemptions</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/gifts.html">Gifts</a></li>
                 </ul>
                 <div class="d-flex align-items-center d-none" id="userMenu">
-                    <span class="text-light me-3">
-                        <i class="bi bi-coin me-1"></i>
-                        <span id="userPoints">0</span> Points
-                    </span>
+                    <span class="text-light me-3"><i class="bi bi-coin me-1"></i><span id="userPoints">0</span>
+                        Points</span>
                     <div class="dropdown">
                         <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle me-1"></i>
                             <span id="userName">User</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="/profile.html"><i
                                         class="bi bi-person me-2"></i>Profile</a></li>
-                            <li><a class="dropdown-item" href="/redemptions.html"><i class="bi bi-bag me-2"></i>My
-                                    Redemptions</a></li>
+                            <li><a class="dropdown-item active" href="/redemptions.html"><i
+                                        class="bi bi-bag me-2"></i>My Redemptions</a></li>
                             <li id="adminLink" class="d-none"><a class="dropdown-item" href="/admin/gifts.html"><i
                                         class="bi bi-gear me-2"></i>Admin Panel</a></li>
                             <li>
@@ -60,12 +50,83 @@
 
     <main class="py-5">
         <div class="container">
-            <h2 class="fw-bold mb-4"><i class="bi bi-bag-check me-2"></i>My Redemptions</h2>
+            <h2 class="fw-bold mb-4"><i class="bi bi-bag me-2"></i>My Redemptions</h2>
 
-            <div id="redemptionsList">
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+            <!-- Tab Navigation -->
+            <ul class="nav nav-tabs mb-4" id="redemptionTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="cart-tab" data-bs-toggle="tab" data-bs-target="#cart"
+                        type="button" role="tab">
+                        <i class="bi bi-cart me-2"></i>Cart <span class="badge bg-primary ms-1" id="cartBadge">0</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history"
+                        type="button" role="tab">
+                        <i class="bi bi-clock-history me-2"></i>Redemption History
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="redemptionTabsContent">
+                <!-- Cart Tab -->
+                <div class="tab-pane fade show active" id="cart" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-white py-3">
+                                    <h5 class="mb-0 fw-bold">Cart Items</h5>
+                                </div>
+                                <div class="card-body p-0" id="cartItems">
+                                    <div class="text-center py-5 text-muted">
+                                        <i class="bi bi-cart display-4"></i>
+                                        <p class="mt-3">Your cart is empty</p>
+                                        <a href="/gifts.html" class="btn btn-primary">Browse Gifts</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card border-0 shadow-sm sticky-top" style="top: 100px;">
+                                <div class="card-header bg-white py-3">
+                                    <h5 class="mb-0 fw-bold">Order Summary</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Total Items</span>
+                                        <span id="totalItems">0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <span class="fw-bold">Total Points</span>
+                                        <span class="fw-bold text-primary" id="totalPoints">0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-3 text-muted">
+                                        <small>Your Points Balance</small>
+                                        <small id="userBalance">0</small>
+                                    </div>
+                                    <button class="btn btn-primary w-100 py-3" onclick="redeemAllCart()" id="redeemBtn"
+                                        disabled>
+                                        <i class="bi bi-bag-check me-2"></i>Redeem All
+                                    </button>
+                                    <button class="btn btn-outline-danger w-100 mt-2" onclick="clearCart()"
+                                        id="clearBtn" disabled>
+                                        <i class="bi bi-trash me-2"></i>Clear Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div class="tab-pane fade" id="history" role="tabpanel">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-0" id="historyList">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -77,35 +138,25 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-star me-2"></i>Rate Your Gift</h5>
+                    <h5 class="modal-title">Rate this Gift</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="text-center mb-4">
-                        <img id="ratingGiftImage" src="" alt="" class="rounded mb-3" style="max-width: 150px;">
-                        <h6 id="ratingGiftName" class="fw-bold"></h6>
+                <div class="modal-body text-center">
+                    <h6 id="ratingGiftName" class="mb-4"></h6>
+                    <input type="hidden" id="ratingGiftId">
+                    <input type="hidden" id="ratingRedemptionId">
+                    <div class="star-rating mb-4">
+                        <i class="bi bi-star fs-2" data-star="1" onclick="selectStar(1)"></i>
+                        <i class="bi bi-star fs-2" data-star="2" onclick="selectStar(2)"></i>
+                        <i class="bi bi-star fs-2" data-star="3" onclick="selectStar(3)"></i>
+                        <i class="bi bi-star fs-2" data-star="4" onclick="selectStar(4)"></i>
+                        <i class="bi bi-star fs-2" data-star="5" onclick="selectStar(5)"></i>
                     </div>
-                    <form id="ratingForm">
-                        <input type="hidden" id="ratingRedemptionId">
-                        <input type="hidden" id="ratingGiftId">
-                        <div class="mb-4 text-center">
-                            <label class="form-label">Your Rating</label>
-                            <div class="star-rating fs-2" id="starRating">
-                                <i class="bi bi-star" data-value="1"></i>
-                                <i class="bi bi-star" data-value="2"></i>
-                                <i class="bi bi-star" data-value="3"></i>
-                                <i class="bi bi-star" data-value="4"></i>
-                                <i class="bi bi-star" data-value="5"></i>
-                            </div>
-                            <input type="hidden" id="ratingStars" value="0">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Review (Optional)</label>
-                            <textarea class="form-control" id="ratingReview" rows="3"
-                                placeholder="Tell us about your experience..."></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Submit Rating</button>
-                    </form>
+                    <div class="mb-3">
+                        <textarea class="form-control" id="ratingReview" placeholder="Write a review (optional)"
+                            rows="3"></textarea>
+                    </div>
+                    <button class="btn btn-primary w-100" onclick="submitRating()">Submit Rating</button>
                 </div>
             </div>
         </div>
@@ -116,17 +167,17 @@
     <script src="/js/auth.js"></script>
     <script>
         let ratingModal;
+        let selectedStars = 0;
+        let userPointBalance = 0;
 
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', () => {
             if (!requireAuth()) return;
             checkAuth();
             showAdminLinkIfNeeded();
-            loadRedemptions();
-
             ratingModal = new bootstrap.Modal(document.getElementById('ratingModal'));
-            setupStarRating();
-
-            document.getElementById('ratingForm').addEventListener('submit', handleRatingSubmit);
+            loadCart();
+            loadHistory();
+            loadUserBalance();
         });
 
         function showAdminLinkIfNeeded() {
@@ -136,157 +187,244 @@
             }
         }
 
-        async function loadRedemptions() {
+        async function loadUserBalance() {
             try {
-                const response = await api.get('/users/me/redemptions');
-                const container = document.getElementById('redemptionsList');
-
-                if (response.data && response.data.length > 0) {
-                    container.innerHTML = response.data.map(r => createRedemptionCard(r)).join('');
-                } else {
-                    container.innerHTML = `
-                        <div class="text-center py-5">
-                            <i class="bi bi-bag-x display-1 text-muted"></i>
-                            <h4 class="mt-3 text-muted">No Redemptions Yet</h4>
-                            <p class="text-muted">Start browsing gifts and redeem your points!</p>
-                            <a href="/gifts.html" class="btn btn-primary mt-3">Browse Gifts</a>
-                        </div>
-                    `;
-                }
+                const response = await api.get('/users/me');
+                const user = response.data || response;
+                userPointBalance = user.pointBalance || 0;
+                document.getElementById('userBalance').textContent = formatNumber(userPointBalance);
+                document.getElementById('userPoints').textContent = formatNumber(userPointBalance);
+                updateCartSummary();
             } catch (error) {
-                console.error('Error loading redemptions:', error);
-                showToast('Failed to load redemptions', 'danger');
+                console.error('Error loading balance:', error);
             }
         }
 
-        function createRedemptionCard(redemption) {
-            const date = new Date(redemption.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric', month: 'short', day: 'numeric'
-            });
+        function loadCart() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const container = document.getElementById('cartItems');
 
-            const ratingSection = redemption.hasRating
-                ? `<span class="badge bg-success"><i class="bi bi-check me-1"></i>Rated ${redemption.rating.stars}★</span>`
-                : `<button class="btn btn-sm btn-outline-warning" onclick="openRatingModal('${redemption.id}', '${redemption.giftId}', '${escapeHtml(redemption.giftName)}', '${redemption.giftImageUrl || ''}')">
-                    <i class="bi bi-star me-1"></i>Rate
-                  </button>`;
+            document.getElementById('cartBadge').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-            return `
-                <div class="card mb-3 border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                <img src="${redemption.giftImageUrl || 'https://via.placeholder.com/80x80?text=Gift'}" 
-                                    alt="${redemption.giftName}" class="rounded" style="width: 80px; height: 80px; object-fit: cover;">
-                            </div>
-                            <div class="col">
-                                <h6 class="fw-bold mb-1">${redemption.giftName}</h6>
-                                <p class="text-muted mb-1 small">
-                                    <i class="bi bi-calendar me-1"></i>${date}
-                                    <span class="mx-2">•</span>
-                                    Qty: ${redemption.quantity}
-                                </p>
-                                <span class="badge bg-${redemption.status === 'completed' ? 'success' : 'warning'}">${redemption.status}</span>
-                            </div>
-                            <div class="col-auto text-end">
-                                <div class="fw-bold text-primary mb-2">
-                                    <i class="bi bi-coin me-1"></i>${redemption.pointsSpent.toLocaleString()} pts
-                                </div>
-                                ${ratingSection}
-                            </div>
-                        </div>
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-cart display-4"></i>
+                        <p class="mt-3">Your cart is empty</p>
+                        <a href="/gifts.html" class="btn btn-primary">Browse Gifts</a>
                     </div>
-                </div>
+                `;
+                document.getElementById('redeemBtn').disabled = true;
+                document.getElementById('clearBtn').disabled = true;
+                updateCartSummary();
+                return;
+            }
+
+            document.getElementById('redeemBtn').disabled = false;
+            document.getElementById('clearBtn').disabled = false;
+
+            container.innerHTML = `
+                <ul class="list-group list-group-flush">
+                    ${cart.map((item, index) => `
+                        <li class="list-group-item py-3">
+                            <div class="d-flex align-items-center">
+                                <img src="${item.gift.imageUrl || '/assets/image.jpg'}" alt="${item.gift.name}" 
+                                    class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;" onerror="this.src='/assets/image.jpg'">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 fw-bold">${item.gift.name}</h6>
+                                    <div class="text-primary fw-bold">
+                                        <i class="bi bi-coin me-1"></i>${formatNumber(item.gift.pointsRequired)} pts × ${item.quantity}
+                                    </div>
+                                    <small class="text-muted">Subtotal: ${formatNumber(item.gift.pointsRequired * item.quantity)} pts</small>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="quantity-selector me-3">
+                                        <button onclick="updateCartQty(${index}, -1)">-</button>
+                                        <input type="number" value="${item.quantity}" readonly style="width: 40px;">
+                                        <button onclick="updateCartQty(${index}, 1)">+</button>
+                                    </div>
+                                    <button class="btn btn-outline-danger btn-sm" onclick="removeFromCart(${index})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                    `).join('')}
+                </ul>
             `;
+            updateCartSummary();
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text || '';
-            return div.innerHTML;
+        function updateCartSummary() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPoints = cart.reduce((sum, item) => sum + (item.gift.pointsRequired * item.quantity), 0);
+
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('totalPoints').textContent = formatNumber(totalPoints);
+
+            const redeemBtn = document.getElementById('redeemBtn');
+            if (totalPoints > userPointBalance && cart.length > 0) {
+                redeemBtn.disabled = true;
+                redeemBtn.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>Insufficient Points';
+            } else if (cart.length > 0) {
+                redeemBtn.disabled = false;
+                redeemBtn.innerHTML = '<i class="bi bi-bag-check me-2"></i>Redeem All';
+            }
         }
 
-        function openRatingModal(redemptionId, giftId, giftName, giftImageUrl) {
-            document.getElementById('ratingRedemptionId').value = redemptionId;
+        function updateCartQty(index, delta) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const newQty = cart[index].quantity + delta;
+            if (newQty >= 1 && newQty <= (cart[index].gift.stock || 99)) {
+                cart[index].quantity = newQty;
+                localStorage.setItem('cart', JSON.stringify(cart));
+                loadCart();
+            }
+        }
+
+        function removeFromCart(index) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+            showToast('Item removed from cart', 'info');
+        }
+
+        function clearCart() {
+            if (!confirm('Are you sure you want to clear your cart?')) return;
+            localStorage.removeItem('cart');
+            loadCart();
+            showToast('Cart cleared', 'info');
+        }
+
+        async function redeemAllCart() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            if (cart.length === 0) return;
+
+            const redeemBtn = document.getElementById('redeemBtn');
+            redeemBtn.disabled = true;
+            redeemBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+
+            try {
+                const items = cart.map(item => ({
+                    giftId: item.giftId,
+                    quantity: item.quantity
+                }));
+
+                const response = await api.post('/gifts/redeem/multiple', { items });
+
+                localStorage.removeItem('cart');
+                loadCart();
+                loadHistory();
+                loadUserBalance();
+
+                showToast('All items redeemed successfully!', 'success');
+
+                // Switch to history tab
+                const historyTab = new bootstrap.Tab(document.getElementById('history-tab'));
+                historyTab.show();
+
+            } catch (error) {
+                showToast(error.message || 'Failed to redeem items', 'danger');
+                redeemBtn.disabled = false;
+                redeemBtn.innerHTML = '<i class="bi bi-bag-check me-2"></i>Redeem All';
+            }
+        }
+
+        async function loadHistory() {
+            const container = document.getElementById('historyList');
+            try {
+                const response = await api.get('/users/me/redemptions');
+                const redemptions = response.data || [];
+
+                if (redemptions.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-clock-history display-4"></i>
+                            <p class="mt-3">No redemption history yet</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <ul class="list-group list-group-flush">
+                        ${redemptions.map(r => `
+                            <li class="list-group-item py-3">
+                                <div class="d-flex align-items-center">
+                                    <img src="${r.giftImageUrl || '/assets/image.jpg'}" alt="${r.giftName}" 
+                                        class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;" onerror="this.src='/assets/image.jpg'">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 fw-bold">${r.giftName}</h6>
+                                        <small class="text-muted">
+                                            ${new Date(r.createdAt).toLocaleDateString()} · 
+                                            Qty: ${r.quantity} · 
+                                            ${formatNumber(r.pointsSpent)} pts
+                                        </small>
+                                    </div>
+                                    <div>
+                                        ${r.hasRating
+                        ? `<span class="badge bg-success"><i class="bi bi-star-fill me-1"></i>${r.rating.stars}★</span>`
+                        : `<button class="btn btn-outline-primary btn-sm" onclick="openRatingModal('${r.giftId}', '${r.id}', '${r.giftName.replace(/'/g, "\\'")}')">
+                                                <i class="bi bi-star me-1"></i>Rate
+                                            </button>`
+                    }
+                                    </div>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+            } catch (error) {
+                container.innerHTML = '<div class="text-center py-5 text-danger">Failed to load history</div>';
+            }
+        }
+
+        function openRatingModal(giftId, redemptionId, giftName) {
             document.getElementById('ratingGiftId').value = giftId;
+            document.getElementById('ratingRedemptionId').value = redemptionId;
             document.getElementById('ratingGiftName').textContent = giftName;
-            document.getElementById('ratingGiftImage').src = giftImageUrl || 'https://via.placeholder.com/150x150?text=Gift';
-            document.getElementById('ratingStars').value = 0;
             document.getElementById('ratingReview').value = '';
-            resetStars();
+            selectedStars = 0;
+            updateStarDisplay();
             ratingModal.show();
         }
 
-        function setupStarRating() {
-            const container = document.getElementById('starRating');
-            const stars = container.querySelectorAll('i');
+        function selectStar(star) {
+            selectedStars = star;
+            updateStarDisplay();
+        }
 
-            stars.forEach(star => {
-                star.addEventListener('click', () => {
-                    const value = parseInt(star.dataset.value);
-                    document.getElementById('ratingStars').value = value;
-                    updateStars(value);
-                });
-
-                star.addEventListener('mouseenter', () => {
-                    updateStars(parseInt(star.dataset.value));
-                });
-            });
-
-            container.addEventListener('mouseleave', () => {
-                updateStars(parseInt(document.getElementById('ratingStars').value));
+        function updateStarDisplay() {
+            document.querySelectorAll('.star-rating i').forEach(s => {
+                const starValue = parseInt(s.dataset.star);
+                s.className = starValue <= selectedStars ? 'bi bi-star-fill fs-2 text-warning' : 'bi bi-star fs-2';
             });
         }
 
-        function updateStars(value) {
-            const stars = document.querySelectorAll('#starRating i');
-            stars.forEach((star, index) => {
-                if (index < value) {
-                    star.classList.remove('bi-star');
-                    star.classList.add('bi-star-fill', 'text-warning');
-                } else {
-                    star.classList.remove('bi-star-fill', 'text-warning');
-                    star.classList.add('bi-star');
-                }
-            });
-        }
-
-        function resetStars() {
-            updateStars(0);
-        }
-
-        async function handleRatingSubmit(event) {
-            event.preventDefault();
-
-            const stars = parseInt(document.getElementById('ratingStars').value);
-            if (stars < 1 || stars > 5) {
+        async function submitRating() {
+            if (selectedStars === 0) {
                 showToast('Please select a rating', 'warning');
                 return;
             }
 
-            const redemptionId = document.getElementById('ratingRedemptionId').value;
             const giftId = document.getElementById('ratingGiftId').value;
+            const redemptionId = document.getElementById('ratingRedemptionId').value;
             const review = document.getElementById('ratingReview').value;
 
-            const submitBtn = event.target.querySelector('button[type="submit"]');
-
             try {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Submitting...';
-
                 await api.post(`/gifts/${giftId}/rating`, {
-                    stars,
-                    review: review || undefined,
-                    redemptionId
+                    redemptionId,
+                    stars: selectedStars,
+                    review: review || undefined
                 });
 
-                showToast('Thank you for your rating!', 'success');
                 ratingModal.hide();
-                loadRedemptions();
-
+                showToast('Rating submitted successfully!', 'success');
+                loadHistory();
             } catch (error) {
                 showToast(error.message || 'Failed to submit rating', 'danger');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Rating';
             }
         }
     </script>

@@ -364,6 +364,17 @@ export class GiftsService {
             })
             .returning();
 
+        // Get current gift data to include seeded avgRating/totalReviews that may not have ratings table entries
+        const [currentGift] = await this.db
+            .select({
+                avgRating: schema.gifts.avgRating,
+                totalReviews: schema.gifts.totalReviews,
+            })
+            .from(schema.gifts)
+            .where(eq(schema.gifts.id, giftId))
+            .limit(1);
+
+        // Get actual ratings from table
         const ratingStats = await this.db
             .select({
                 avgRating: sql<string>`AVG(${schema.ratings.stars})::numeric(3,2)`,
@@ -372,11 +383,32 @@ export class GiftsService {
             .from(schema.ratings)
             .where(eq(schema.ratings.giftId, giftId));
 
+        const actualRatingsCount = Number(ratingStats[0].totalReviews) || 0;
+        const actualAvgRating = parseFloat(ratingStats[0].avgRating) || 0;
+
+        // Check if gift had pre-seeded reviews that aren't in ratings table
+        const seededReviewsCount = (currentGift?.totalReviews || 0) - actualRatingsCount + 1; // +1 because we just added one
+
+        let newAvgRating: number;
+        let newTotalReviews: number;
+
+        if (seededReviewsCount > 0 && actualRatingsCount === 1) {
+            // First real rating on a seeded gift - blend with seeded data
+            const seededAvg = parseFloat(currentGift?.avgRating || '0');
+            const seededCount = currentGift?.totalReviews || 0;
+            newTotalReviews = seededCount + 1;
+            newAvgRating = ((seededAvg * seededCount) + ratingDto.stars) / newTotalReviews;
+        } else {
+            // All ratings are real, just use actual stats
+            newAvgRating = actualAvgRating;
+            newTotalReviews = actualRatingsCount;
+        }
+
         await this.db
             .update(schema.gifts)
             .set({
-                avgRating: ratingStats[0].avgRating,
-                totalReviews: ratingStats[0].totalReviews,
+                avgRating: newAvgRating.toFixed(2),
+                totalReviews: newTotalReviews,
                 updatedAt: new Date(),
             })
             .where(eq(schema.gifts.id, giftId));

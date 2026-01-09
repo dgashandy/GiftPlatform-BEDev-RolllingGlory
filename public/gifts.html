@@ -218,7 +218,7 @@
             container.innerHTML = gifts.map(gift => `
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 gift-card border-0 shadow-sm">
-                        <img src="${gift.imageUrl || 'https://via.placeholder.com/300x200?text=Gift'}" class="card-img-top" alt="${gift.name}">
+                        <img src="${gift.imageUrl || '/assets/image.jpg'}" class="card-img-top" alt="${gift.name}" onerror="this.src='/assets/image.jpg'">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <span class="badge bg-light text-dark">${gift.categoryName || 'General'}</span>
