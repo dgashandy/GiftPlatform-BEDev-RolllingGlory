@@ -173,4 +173,47 @@ export class UsersService {
 
         return entry;
     }
+
+    async getRedemptions(userId: string) {
+        const redemptions = await this.db
+            .select({
+                id: schema.redemptions.id,
+                quantity: schema.redemptions.quantity,
+                pointsSpent: schema.redemptions.pointsSpent,
+                status: schema.redemptions.status,
+                createdAt: schema.redemptions.createdAt,
+                giftId: schema.gifts.id,
+                giftName: schema.gifts.name,
+                giftImageUrl: schema.gifts.imageUrl,
+                giftPointsRequired: schema.gifts.pointsRequired,
+            })
+            .from(schema.redemptions)
+            .leftJoin(schema.gifts, eq(schema.redemptions.giftId, schema.gifts.id))
+            .where(eq(schema.redemptions.userId, userId))
+            .orderBy(desc(schema.redemptions.createdAt));
+
+        const redemptionIds = redemptions.map((r: any) => r.id);
+
+        let ratingsMap: Map<string, any> = new Map();
+        if (redemptionIds.length > 0) {
+            const ratings = await this.db
+                .select({
+                    redemptionId: schema.ratings.redemptionId,
+                    stars: schema.ratings.stars,
+                    review: schema.ratings.review,
+                })
+                .from(schema.ratings)
+                .where(eq(schema.ratings.userId, userId));
+
+            ratings.forEach((r: any) => ratingsMap.set(r.redemptionId, r));
+        }
+
+        return {
+            data: redemptions.map((r: any) => ({
+                ...r,
+                hasRating: ratingsMap.has(r.id),
+                rating: ratingsMap.get(r.id) || null,
+            })),
+        };
+    }
 }

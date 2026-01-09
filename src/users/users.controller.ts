@@ -55,4 +55,9 @@ export class UsersController {
         );
         return { data: history };
     }
+
+    @Get('me/redemptions')
+    async getRedemptions(@CurrentUser('id') userId: string) {
+        return this.usersService.getRedemptions(userId);
+    }
 }

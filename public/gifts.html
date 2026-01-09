@@ -36,6 +36,10 @@
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="/profile.html"><i
                                         class="bi bi-person me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="/redemptions.html"><i class="bi bi-bag me-2"></i>My
+                                    Redemptions</a></li>
+                            <li id="adminLink" class="d-none"><a class="dropdown-item" href="/admin/gifts.html"><i
+                                        class="bi bi-gear me-2"></i>Admin Panel</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -60,6 +64,24 @@
                             <select class="form-select" id="categoryFilter" onchange="applyFilters()">
                                 <option value="">All Categories</option>
                             </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Min Rating</label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="ratingFilter" id="ratingAll" value="0"
+                                    checked onchange="applyFilters()">
+                                <label class="btn btn-outline-warning btn-sm" for="ratingAll">All</label>
+                                <input type="radio" class="btn-check" name="ratingFilter" id="rating3" value="3"
+                                    onchange="applyFilters()">
+                                <label class="btn btn-outline-warning btn-sm" for="rating3">3★+</label>
+                                <input type="radio" class="btn-check" name="ratingFilter" id="rating4" value="4"
+                                    onchange="applyFilters()">
+                                <label class="btn btn-outline-warning btn-sm" for="rating4">4★+</label>
+                                <input type="radio" class="btn-check" name="ratingFilter" id="rating5" value="5"
+                                    onchange="applyFilters()">
+                                <label class="btn btn-outline-warning btn-sm" for="rating5">5★</label>
+                            </div>
                         </div>
 
                         <div class="mb-4">
@@ -128,9 +150,17 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             checkAuth();
+            showAdminLinkIfNeeded();
             loadCategories();
             loadGifts();
         });
+
+        function showAdminLinkIfNeeded() {
+            const user = getUser();
+            if (user && (user.role === 'admin' || user.role === 'support')) {
+                document.getElementById('adminLink').classList.remove('d-none');
+            }
+        }
 
         async function loadCategories() {
             try {
@@ -155,10 +185,12 @@
             const categoryId = document.getElementById('categoryFilter').value;
             const search = document.getElementById('searchInput').value;
             const limit = document.getElementById('limitSelect').value;
+            const minRating = document.querySelector('input[name="ratingFilter"]:checked')?.value || '0';
 
             let url = `/gifts?page=${currentPage}&limit=${limit}&sortBy=${sortBy}&order=${order}`;
             if (categoryId) url += `&categoryId=${categoryId}`;
             if (search) url += `&search=${encodeURIComponent(search)}`;
+            if (minRating && minRating !== '0') url += `&minRating=${minRating}`;
 
             try {
                 const response = await api.get(url);

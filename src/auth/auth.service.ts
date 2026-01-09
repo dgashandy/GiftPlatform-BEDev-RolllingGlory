@@ -126,18 +126,24 @@ export class AuthService {
             description: 'Welcome bonus - New user registration',
         });
 
-        await this.transporter.sendMail({
-            from: this.configService.get('MAIL_FROM'),
-            to: newUser.email,
-            subject: 'Verify Your Email - Gift Platform',
-            html: `
-                <h1>Welcome to Gift Platform!</h1>
-                <p>Thank you for registering. Please verify your email with this OTP code:</p>
-                <h2 style="font-size: 32px; letter-spacing: 5px; color: #6366f1;">${otp}</h2>
-                <p>This code expires in 10 minutes.</p>
-                <p>You'll receive <strong>1000 bonus points</strong> once verified!</p>
-            `,
-        });
+        try {
+            await this.transporter.sendMail({
+                from: this.configService.get('MAIL_FROM'),
+                to: newUser.email,
+                subject: 'Verify Your Email - Gift Platform',
+                html: `
+                    <h1>Welcome to Gift Platform!</h1>
+                    <p>Thank you for registering. Please verify your email with this OTP code:</p>
+                    <h2 style="font-size: 32px; letter-spacing: 5px; color: #6366f1;">${otp}</h2>
+                    <p>This code expires in 10 minutes.</p>
+                    <p>You'll receive <strong>1000 bonus points</strong> once verified!</p>
+                `,
+            });
+        } catch (emailError) {
+            await this.db.delete(schema.pointBalance).where(eq(schema.pointBalance.userId, newUser.id));
+            await this.db.delete(schema.users).where(eq(schema.users.id, newUser.id));
+            throw new BadRequestException('Failed to send verification email. Please check your email address and try again.');
+        }
 
         return {
             message: 'Registration successful. Please check your email for OTP verification.',

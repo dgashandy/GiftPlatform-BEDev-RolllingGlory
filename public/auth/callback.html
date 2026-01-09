@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completing Sign In... - Gift Platform</title>
+    <link href="/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/libs/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="d-flex justify-content-center align-items-center min-vh-100">
+        <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <h4>Completing sign in...</h4>
+            <p class="text-muted">Please wait while we log you in.</p>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        (async function() {
+            const params = new URLSearchParams(window.location.search);
+            const accessToken = params.get('accessToken');
+            const refreshToken = params.get('refreshToken');
+            const isNewUser = params.get('isNewUser') === 'true';
+
+            if (accessToken && refreshToken) {
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+
+                try {
+                    const response = await api.get('/users/me');
+                    const user = response.data || response;
+                    localStorage.setItem('user', JSON.stringify(user));
+                    
+                    if (isNewUser) {
+                        window.location.href = '/?welcome=true';
+                    } else {
+                        window.location.href = '/';
+                    }
+                } catch (error) {
+                    console.error('Failed to get user profile:', error);
+                    window.location.href = '/login.html?error=auth_failed';
+                }
+            } else {
+                window.location.href = '/login.html?error=missing_tokens';
+            }
+        })();
+    </script>
+</body>
+</html>

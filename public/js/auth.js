@@ -94,6 +94,7 @@ async function handleRegister(event) {
 
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone')?.value || undefined;
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
     const submitBtn = event.target.querySelector('button[type="submit"]');
@@ -107,7 +108,7 @@ async function handleRegister(event) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating account...';
 
-        const response = await api.post('/auth/register', { name, email, password });
+        const response = await api.post('/auth/register', { name, email, phone, password });
         const data = response.data || response;
 
         if (data.requiresVerification) {

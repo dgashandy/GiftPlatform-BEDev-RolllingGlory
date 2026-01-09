@@ -30,7 +30,7 @@ export class GiftsService {
     }
 
     async findAll(query: GiftQueryDto) {
-        const { page = 1, limit = 10, sortBy = 'createdAt', order = 'DESC', categoryId, search } = query;
+        const { page = 1, limit = 10, sortBy = 'createdAt', order = 'DESC', categoryId, search, minRating } = query;
         const offset = (page - 1) * limit;
 
         const conditions = [eq(schema.gifts.isActive, true)];
@@ -40,7 +40,11 @@ export class GiftsService {
         }
 
         if (search) {
-            conditions.push(like(schema.gifts.name, `%${search}%`));
+            conditions.push(sql`LOWER(${schema.gifts.name}) LIKE LOWER(${'%' + search + '%'})`);
+        }
+
+        if (minRating !== undefined && minRating > 0) {
+            conditions.push(sql`CAST(${schema.gifts.avgRating} AS DECIMAL) >= ${minRating}`);
         }
 
         const [{ total }] = await this.db

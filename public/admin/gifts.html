@@ -7,48 +7,62 @@
     <title>Admin - Gift Management</title>
     <link href="/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/libs/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="d-flex">
-        <div class="admin-sidebar" style="width: 250px;">
-            <a href="/" class="text-white text-decoration-none d-flex align-items-center mb-4">
-                <i class="bi bi-gift fs-4 me-2"></i><span class="fs-5 fw-bold">Gift Platform</span>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="bi bi-gear me-2"></i>Admin Panel
             </a>
-            <ul class="nav flex-column">
-                <li class="nav-item"><a class="nav-link active" href="/admin/gifts.html"><i
-                            class="bi bi-grid me-2"></i>Gifts</a></li>
-                <li class="nav-item"><a class="nav-link" href="/admin/categories.html"><i
-                            class="bi bi-tag me-2"></i>Categories</a></li>
-            </ul>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/gifts.html">
+                            <i class="bi bi-gift me-1"></i>Gifts
+                        </a>
+                    </li>
+                    <li class="nav-item" id="adminOnlyLink">
+                        <a class="nav-link" href="/admin/index.html">
+                            <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span class="text-light me-3">
+                        <i class="bi bi-person-circle me-1"></i>
+                        <span id="userName">Admin</span>
+                    </span>
+                    <a href="#" class="btn btn-outline-light btn-sm" onclick="logout()">Logout</a>
+                </div>
+            </div>
         </div>
+    </nav>
 
-        <div class="flex-grow-1 bg-light">
-            <nav class="navbar navbar-light bg-white shadow-sm px-4">
-                <span class="navbar-brand fw-bold">Gift Management</span>
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
-                        id="adminName">Admin</button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item text-danger" href="#" onclick="logout()">Logout</a></li>
-                    </ul>
-                </div>
-            </nav>
+    <main class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold mb-0"><i class="bi bi-gift me-2"></i>Gift Management</h2>
+                <button class="btn btn-primary" onclick="openAddModal()">
+                    <i class="bi bi-plus-lg me-2"></i>Add New Gift
+                </button>
+            </div>
 
-            <div class="container-fluid p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold mb-0">All Gifts</h4>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#giftModal"
-                        onclick="openAddModal()">
-                        <i class="bi bi-plus-lg me-2"></i>Add Gift
-                    </button>
-                </div>
-
-                <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-modern mb-0">
-                            <thead>
+                        <table class="table table-hover align-middle" id="giftsTable">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Image</th>
                                     <th>Name</th>
@@ -56,13 +70,14 @@
                                     <th>Points</th>
                                     <th>Stock</th>
                                     <th>Rating</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="giftsTable">
+                            <tbody id="giftsTableBody">
                                 <tr>
-                                    <td colspan="7" class="text-center py-4">
-                                        <div class="spinner-border"></div>
+                                    <td colspan="8" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status"></div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -71,50 +86,59 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
+    <!-- Add/Edit Modal -->
     <div class="modal fade" id="giftModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Add Gift</h5>
+                    <h5 class="modal-title" id="modalTitle">Add New Gift</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form onsubmit="saveGift(event)">
-                    <div class="modal-body">
+                <div class="modal-body">
+                    <form id="giftForm">
                         <input type="hidden" id="giftId">
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <label class="form-label">Name</label>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Name *</label>
                                 <input type="text" class="form-control" id="giftName" required>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label">Category</label>
-                                <select class="form-select" id="giftCategory"></select>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Description</label>
-                                <textarea class="form-control" id="giftDescription" rows="3"></textarea>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Points Required</label>
-                                <input type="number" class="form-control" id="giftPoints" required min="0">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Stock</label>
-                                <input type="number" class="form-control" id="giftStock" required min="0">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Image URL</label>
-                                <input type="url" class="form-control" id="giftImage">
+                                <select class="form-select" id="giftCategory">
+                                    <option value="">Select Category</option>
+                                </select>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Gift</button>
-                    </div>
-                </form>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="giftDescription" rows="3"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Points Required *</label>
+                                <input type="number" class="form-control" id="giftPoints" min="0" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Stock *</label>
+                                <input type="number" class="form-control" id="giftStock" min="0" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="giftStatus">
+                                    <option value="true">Active</option>
+                                    <option value="false">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Image URL</label>
+                            <input type="url" class="form-control" id="giftImageUrl" placeholder="https://...">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Save Gift</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -123,107 +147,169 @@
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script>
-        let editingId = null;
+        let giftModal;
+        let categories = [];
 
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             if (!requireAuth()) return;
-            if (!requireRole(['admin', 'support'])) return;
+
             const user = getUser();
-            document.getElementById('adminName').textContent = user?.name || 'Admin';
-            loadGifts();
-            loadCategories();
+            if (!user || (user.role !== 'admin' && user.role !== 'support')) {
+                showToast('Access denied. Admin or Support role required.', 'danger');
+                window.location.href = '/';
+                return;
+            }
+
+            document.getElementById('userName').textContent = user.name || user.email;
+
+            giftModal = new bootstrap.Modal(document.getElementById('giftModal'));
+            document.getElementById('giftForm').addEventListener('submit', handleSaveGift);
+
+            await loadCategories();
+            await loadGifts();
         });
 
         async function loadCategories() {
             try {
                 const response = await api.get('/gifts/categories');
+                categories = response.data || response;
                 const select = document.getElementById('giftCategory');
-                select.innerHTML = '<option value="">Select Category</option>';
-                (response.data || response).forEach(c => {
-                    select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.id;
+                    option.textContent = cat.name;
+                    select.appendChild(option);
                 });
-            } catch (error) { console.error(error); }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
         }
 
         async function loadGifts() {
             try {
                 const response = await api.get('/gifts?limit=100');
-                const tbody = document.getElementById('giftsTable');
                 const gifts = response.data || [];
+                renderGiftsTable(gifts);
+            } catch (error) {
+                console.error('Error loading gifts:', error);
+                showToast('Failed to load gifts', 'danger');
+            }
+        }
 
-                tbody.innerHTML = gifts.map(g => `
-                    <tr>
-                        <td><img src="${g.imageUrl || 'https://via.placeholder.com/50'}" width="50" height="50" class="rounded"></td>
-                        <td><strong>${g.name}</strong></td>
-                        <td>${g.categoryName || '-'}</td>
-                        <td>${formatNumber(g.pointsRequired)}</td>
-                        <td><span class="badge ${g.stock > 0 ? 'bg-success' : 'bg-danger'}">${g.stock}</span></td>
-                        <td>${renderStars(g.starRating || 0)}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editGift('${g.id}')"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteGift('${g.id}')"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
-            } catch (error) { showToast('Error loading gifts', 'danger'); }
+        function renderGiftsTable(gifts) {
+            const tbody = document.getElementById('giftsTableBody');
+
+            if (gifts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-muted">No gifts found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = gifts.map(gift => `
+                <tr>
+                    <td>
+                        <img src="${gift.imageUrl || 'https://via.placeholder.com/50x50?text=Gift'}" 
+                            alt="${gift.name}" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                    </td>
+                    <td><strong>${gift.name}</strong></td>
+                    <td>${gift.categoryName || '-'}</td>
+                    <td><i class="bi bi-coin text-warning me-1"></i>${gift.pointsRequired?.toLocaleString()}</td>
+                    <td>${gift.stock}</td>
+                    <td>${gift.starRating ? gift.starRating + '★' : '-'}</td>
+                    <td>
+                        <span class="badge bg-${gift.isActive ? 'success' : 'secondary'}">
+                            ${gift.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="openEditModal('${gift.id}')">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteGift('${gift.id}', '${gift.name.replace(/'/g, "\\'")}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         function openAddModal() {
-            editingId = null;
-            document.getElementById('modalTitle').textContent = 'Add Gift';
+            document.getElementById('modalTitle').textContent = 'Add New Gift';
+            document.getElementById('giftForm').reset();
             document.getElementById('giftId').value = '';
-            document.getElementById('giftName').value = '';
-            document.getElementById('giftDescription').value = '';
-            document.getElementById('giftCategory').value = '';
-            document.getElementById('giftPoints').value = '';
-            document.getElementById('giftStock').value = '';
-            document.getElementById('giftImage').value = '';
+            document.getElementById('giftStatus').value = 'true';
+            giftModal.show();
         }
 
-        async function editGift(id) {
-            editingId = id;
-            const response = await api.get(`/gifts/${id}`);
-            const g = response.data || response;
-            document.getElementById('modalTitle').textContent = 'Edit Gift';
-            document.getElementById('giftId').value = g.id;
-            document.getElementById('giftName').value = g.name;
-            document.getElementById('giftDescription').value = g.description || '';
-            document.getElementById('giftCategory').value = g.categoryId || '';
-            document.getElementById('giftPoints').value = g.pointsRequired;
-            document.getElementById('giftStock').value = g.stock;
-            document.getElementById('giftImage').value = g.imageUrl || '';
-            new bootstrap.Modal(document.getElementById('giftModal')).show();
+        async function openEditModal(id) {
+            try {
+                const response = await api.get(`/gifts/${id}`);
+                const gift = response.data || response;
+
+                document.getElementById('modalTitle').textContent = 'Edit Gift';
+                document.getElementById('giftId').value = gift.id;
+                document.getElementById('giftName').value = gift.name;
+                document.getElementById('giftDescription').value = gift.description || '';
+                document.getElementById('giftCategory').value = gift.categoryId || '';
+                document.getElementById('giftPoints').value = gift.pointsRequired;
+                document.getElementById('giftStock').value = gift.stock;
+                document.getElementById('giftImageUrl').value = gift.imageUrl || '';
+                document.getElementById('giftStatus').value = gift.isActive ? 'true' : 'false';
+
+                giftModal.show();
+            } catch (error) {
+                showToast('Failed to load gift details', 'danger');
+            }
         }
 
-        async function saveGift(event) {
+        async function handleSaveGift(event) {
             event.preventDefault();
+
+            const id = document.getElementById('giftId').value;
             const data = {
                 name: document.getElementById('giftName').value,
-                description: document.getElementById('giftDescription').value,
-                categoryId: document.getElementById('giftCategory').value || null,
+                description: document.getElementById('giftDescription').value || undefined,
+                categoryId: document.getElementById('giftCategory').value || undefined,
                 pointsRequired: parseInt(document.getElementById('giftPoints').value),
                 stock: parseInt(document.getElementById('giftStock').value),
-                imageUrl: document.getElementById('giftImage').value || null,
+                imageUrl: document.getElementById('giftImageUrl').value || undefined,
+                isActive: document.getElementById('giftStatus').value === 'true',
             };
+
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+
             try {
-                if (editingId) {
-                    await api.put(`/gifts/${editingId}`, data);
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
+
+                if (id) {
+                    await api.put(`/gifts/${id}`, data);
+                    showToast('Gift updated successfully', 'success');
                 } else {
                     await api.post('/gifts', data);
+                    showToast('Gift created successfully', 'success');
                 }
-                showToast('Gift saved!', 'success');
-                bootstrap.Modal.getInstance(document.getElementById('giftModal')).hide();
+
+                giftModal.hide();
                 loadGifts();
-            } catch (error) { showToast(error.message, 'danger'); }
+
+            } catch (error) {
+                showToast(error.message || 'Failed to save gift', 'danger');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Save Gift';
+            }
         }
 
-        async function deleteGift(id) {
-            if (!confirm('Delete this gift?')) return;
+        async function deleteGift(id, name) {
+            if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+
             try {
                 await api.delete(`/gifts/${id}`);
-                showToast('Gift deleted', 'success');
+                showToast('Gift deleted successfully', 'success');
                 loadGifts();
-            } catch (error) { showToast(error.message, 'danger'); }
+            } catch (error) {
+                showToast(error.message || 'Failed to delete gift', 'danger');
+            }
         }
     </script>
 </body>

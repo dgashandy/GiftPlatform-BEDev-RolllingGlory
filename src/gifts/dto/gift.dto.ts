@@ -8,6 +8,7 @@ import {
     IsArray,
     ValidateNested,
     IsIn,
+    IsNumber,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -96,6 +97,13 @@ export class GiftQueryDto {
     @IsOptional()
     @IsString()
     search?: string;
+
+    @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
+    @Min(0)
+    @Max(5)
+    minRating?: number;
 }
 
 export class RedeemGiftDto {

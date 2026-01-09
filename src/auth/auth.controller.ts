@@ -50,7 +50,7 @@ export class AuthController {
             isNewUser: result.user.isNewUser?.toString() || 'false',
         });
 
-        res.redirect(`${frontendUrl}/auth/callback?${params}`);
+        res.redirect(`${frontendUrl}/auth/callback.html?${params}`);
     }
 
     @Post('otp/request')

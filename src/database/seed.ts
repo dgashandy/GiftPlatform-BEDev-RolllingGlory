@@ -43,6 +43,19 @@ async function seed() {
 
         console.log('✅ Admin user created:', adminUser.email);
 
+        console.log('📝 Seeding support user...');
+        const supportPasswordHash = await bcrypt.hash('support123', 10);
+
+        const [supportUser] = await db.insert(schema.users).values({
+            email: 'support@giftplatform.com',
+            passwordHash: supportPasswordHash,
+            name: 'Support Staff',
+            roleId: supportRole.id,
+            isVerified: true,
+        }).returning();
+
+        console.log('✅ Support user created:', supportUser.email);
+
         console.log('📝 Seeding categories...');
         const categoryData = [
             { name: 'Electronics', slug: 'electronics' },
