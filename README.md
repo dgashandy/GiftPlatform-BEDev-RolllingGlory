@@ -4,11 +4,14 @@ A gift redemption platform API built with NestJS, Drizzle ORM, and PostgreSQL.
 
 ## Tech Stack
 
-- **Framework**: NestJS
-- **Database**: PostgreSQL
-- **ORM**: Drizzle ORM
-- **Authentication**: JWT + Google OAuth
-- **Frontend**: Bootstrap 5 (served via static files)
+| Layer | Technology |
+|-------|------------|
+| **Backend** | NestJS 10.x, TypeScript |
+| **Database** | PostgreSQL 16 |
+| **ORM** | Drizzle ORM |
+| **Auth** | JWT (Access + Refresh Tokens), Google OAuth 2.0, Email OTP |
+| **Frontend** | HTML5, CSS3, Vanilla JS, Bootstrap 5.3 |
+| **Containerization** | Docker, Docker Compose |
 
 ## Architecture
 
@@ -16,6 +19,25 @@ A gift redemption platform API built with NestJS, Drizzle ORM, and PostgreSQL.
 |-------------|------------|------------|
 | Development | Docker     | Local      |
 | Production  | Docker     | Docker     |
+
+---
+
+## User Roles
+
+| Role | Description | Access Level |
+|------|-------------|--------------|
+| `admin` | Full system access | All operations |
+| `support` | Gift management | Create/Update gifts |
+| `user` | Regular user | Browse, redeem, rate |
+
+---
+
+## Default Credentials (Seeded)
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@giftplatform.com | admin123 |
+| Support | support@giftplatform.com | support123 |
 
 ---
 
@@ -45,10 +67,6 @@ docker-compose down -v
 ```
 
 Open http://localhost:3000
-
-**Default Admin Login:**
-- Email: `admin@giftplatform.com`
-- Password: `admin123`
 
 ---
 
@@ -125,34 +143,76 @@ docker-compose -f docker-compose.prod.yml down -v
 
 ---
 
-## API Endpoints
+## API Reference
 
-### Authentication
-- `POST /auth/login` - Login
-- `POST /auth/register` - Register (sends OTP email)
-- `POST /auth/otp/verify` - Verify OTP
-- `POST /auth/otp/request` - Request new OTP
-- `POST /auth/logout` - Logout
-- `POST /auth/refresh` - Refresh token
-- `GET /auth/google` - Google OAuth
+### Authentication (`/auth`)
 
-### Users
-- `GET /users/me` - Get profile
-- `PUT /users/me` - Update profile
-- `POST /users/me/change-password` - Change password
-- `GET /users/me/points` - Get point balance
+| Method | Endpoint | Auth | Roles | Description |
+|--------|----------|------|-------|-------------|
+| `POST` | `/auth/login` | ❌ | Public | Login with email/password |
+| `POST` | `/auth/register` | ❌ | Public | Register new user |
+| `GET` | `/auth/google` | ❌ | Public | Initiate Google OAuth |
+| `GET` | `/auth/google/callback` | ❌ | Public | Google OAuth callback |
+| `POST` | `/auth/otp/request` | ❌ | Public | Request email OTP |
+| `POST` | `/auth/otp/verify` | ❌ | Public | Verify OTP & complete registration |
+| `POST` | `/auth/refresh` | ✅ | Any | Refresh access token |
+| `POST` | `/auth/logout` | ✅ | Any | Logout (invalidate refresh token) |
 
-### Gifts
-- `GET /gifts` - List gifts (paginated)
-- `GET /gifts/:id` - Get gift detail
-- `POST /gifts` - Create gift (admin/support)
-- `PUT /gifts/:id` - Update gift (admin/support)
-- `DELETE /gifts/:id` - Delete gift (admin)
-- `POST /gifts/:id/redeem` - Redeem gift
-- `POST /gifts/:id/rating` - Rate gift
+### Users (`/users`)
+
+> All endpoints require JWT authentication
+
+| Method | Endpoint | Roles | Description |
+|--------|----------|-------|-------------|
+| `GET` | `/users/me` | Any | Get current user profile |
+| `PUT` | `/users/me` | Any | Update profile (name, phone, avatar) |
+| `POST` | `/users/me/change-password` | Any | Change password |
+| `GET` | `/users/me/points` | Any | Get point balance |
+| `GET` | `/users/me/points/history` | Any | Get point transaction history |
+| `GET` | `/users/me/redemptions` | Any | Get redemption history |
+
+### Gifts (`/gifts`)
+
+| Method | Endpoint | Auth | Roles | Description |
+|--------|----------|------|-------|-------------|
+| `GET` | `/gifts` | ❌ | Public | List gifts (paginated, filterable) |
+| `GET` | `/gifts/categories` | ❌ | Public | List all categories |
+| `GET` | `/gifts/:id` | ❌ | Public | Get gift details + reviews |
+| `POST` | `/gifts` | ✅ | admin, support | Create new gift |
+| `PUT` | `/gifts/:id` | ✅ | admin, support | Update gift (full) |
+| `PATCH` | `/gifts/:id` | ✅ | admin, support | Update gift (partial) |
+| `DELETE` | `/gifts/:id` | ✅ | admin | Delete gift |
+| `POST` | `/gifts/:id/redeem` | ✅ | Any | Redeem single gift |
+| `POST` | `/gifts/redeem/multiple` | ✅ | Any | Redeem multiple gifts (cart) |
+| `POST` | `/gifts/:id/rating` | ✅ | Any | Add rating/review |
+
+---
+
+## Key Services
+
+### AuthService
+- `login()` - Validates credentials, returns JWT tokens
+- `register()` - Creates user, sends OTP for verification
+- `requestOtp()` / `verifyOtp()` - Email verification flow
+- `handleGoogleLogin()` - Google OAuth user creation/login
+- `refreshTokens()` - Token refresh mechanism
+
+### UsersService  
+- `getProfile()` / `updateProfile()` - Profile management
+- `changePassword()` - Password update with validation
+- `getPointBalance()` / `getPointHistory()` - Point tracking
+- `getRedemptions()` - User's redemption history
+
+### GiftsService
+- `findAll()` - Paginated gift listing with filters
+- `findOne()` - Gift details with recent reviews
+- `create()` / `update()` / `remove()` - CRUD operations
+- `redeem()` / `redeemMultiple()` - Point deduction & redemption
+- `addRating()` - Rating with average recalculation
 
 ---
 
 ## Environment Variables
 
 See `.env.example` for all required environment variables.
+
