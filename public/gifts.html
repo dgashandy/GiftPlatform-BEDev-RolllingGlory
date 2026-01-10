@@ -38,8 +38,10 @@
                                         class="bi bi-person me-2"></i>Profile</a></li>
                             <li><a class="dropdown-item" href="/redemptions.html"><i class="bi bi-bag me-2"></i>My
                                     Redemptions</a></li>
-                            <li id="adminLink" class="d-none"><a class="dropdown-item" href="/admin/gifts.html"><i
-                                        class="bi bi-gear me-2"></i>Admin Panel</a></li>
+                            <li id="editGiftsLink" class="d-none"><a class="dropdown-item" href="/admin/gifts.html"><i
+                                        class="bi bi-pencil-square me-2"></i>Edit Gifts</a></li>
+                            <li id="adminPanelLink" class="d-none"><a class="dropdown-item" href="/admin/index.html"><i
+                                        class="bi bi-speedometer2 me-2"></i>Admin Panel</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -150,17 +152,11 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             checkAuth();
-            showAdminLinkIfNeeded();
             loadCategories();
             loadGifts();
         });
 
-        function showAdminLinkIfNeeded() {
-            const user = getUser();
-            if (user && (user.role === 'admin' || user.role === 'support')) {
-                document.getElementById('adminLink').classList.remove('d-none');
-            }
-        }
+
 
         async function loadCategories() {
             try {
@@ -215,9 +211,14 @@
                 return;
             }
 
-            container.innerHTML = gifts.map(gift => `
+            container.innerHTML = gifts.map(gift => {
+                const badgeHtml = gift.badgeType
+                    ? `<div class="item-badge"><img src="/assets/${gift.badgeType}.svg" alt="${gift.badgeType}" onerror="this.parentElement.style.display='none'"></div>`
+                    : '';
+                return `
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 gift-card border-0 shadow-sm">
+                        ${badgeHtml}
                         <img src="${gift.imageUrl || '/assets/image.jpg'}" class="card-img-top" alt="${gift.name}" onerror="this.src='/assets/image.jpg'">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-2">
@@ -238,7 +239,7 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function renderPagination(meta) {

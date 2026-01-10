@@ -38,6 +38,16 @@ function checkAuth() {
         const user = getUser();
         if (user) {
             document.getElementById('userName').textContent = user.name || user.email;
+
+            // Show admin links for admin/support users
+            if (user.role === 'admin' || user.role === 'support') {
+                const editGiftsLink = document.getElementById('editGiftsLink');
+                if (editGiftsLink) editGiftsLink.classList.remove('d-none');
+            }
+            if (user.role === 'admin') {
+                const adminPanelLink = document.getElementById('adminPanelLink');
+                if (adminPanelLink) adminPanelLink.classList.remove('d-none');
+            }
         }
 
         loadUserPoints();

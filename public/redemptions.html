@@ -34,8 +34,10 @@
                                         class="bi bi-person me-2"></i>Profile</a></li>
                             <li><a class="dropdown-item active" href="/redemptions.html"><i
                                         class="bi bi-bag me-2"></i>My Redemptions</a></li>
-                            <li id="adminLink" class="d-none"><a class="dropdown-item" href="/admin/gifts.html"><i
-                                        class="bi bi-gear me-2"></i>Admin Panel</a></li>
+                            <li id="editGiftsLink" class="d-none"><a class="dropdown-item" href="/admin/gifts.html"><i
+                                        class="bi bi-pencil-square me-2"></i>Edit Gifts</a></li>
+                            <li id="adminPanelLink" class="d-none"><a class="dropdown-item" href="/admin/index.html"><i
+                                        class="bi bi-speedometer2 me-2"></i>Admin Panel</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -173,19 +175,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             if (!requireAuth()) return;
             checkAuth();
-            showAdminLinkIfNeeded();
             ratingModal = new bootstrap.Modal(document.getElementById('ratingModal'));
             loadCart();
             loadHistory();
             loadUserBalance();
         });
-
-        function showAdminLinkIfNeeded() {
-            const user = getUser();
-            if (user && (user.role === 'admin' || user.role === 'support')) {
-                document.getElementById('adminLink').classList.remove('d-none');
-            }
-        }
 
         async function loadUserBalance() {
             try {

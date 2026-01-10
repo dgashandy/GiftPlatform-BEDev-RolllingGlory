@@ -41,6 +41,7 @@ export const gifts = pgTable('gifts', {
   pointsRequired: integer('points_required').notNull(),
   stock: integer('stock').default(0).notNull(),
   imageUrl: varchar('image_url', { length: 500 }),
+  badgeType: varchar('badge_type', { length: 20 }),
   avgRating: decimal('avg_rating', { precision: 3, scale: 2 }).default('0'),
   totalReviews: integer('total_reviews').default(0).notNull(),
   isActive: boolean('is_active').default(true).notNull(),

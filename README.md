@@ -39,6 +39,9 @@ npm run db:seed
 
 # 6. Start development server (watch mode)
 npm run start:dev
+
+# Reset Docker Container and Volume
+docker-compose down -v 
 ```
 
 Open http://localhost:3000
