@@ -90,8 +90,8 @@
                             <label class="form-label fw-semibold">Sort By</label>
                             <select class="form-select" id="sortBy" onchange="applyFilters()">
                                 <option value="createdAt">Newest</option>
-                                <option value="rating">Highest Rated</option>
-                                <option value="pointsRequired">Points: Low to High</option>
+                                <option value="rating">Rating</option>
+                                <option value="pointsRequired">Points</option>
                             </select>
                         </div>
 
@@ -139,7 +139,7 @@
 
     <footer class="bg-dark text-white py-4">
         <div class="container text-center">
-            <p class="mb-0">© 2026 Gift Platform. All rights reserved.</p>
+            <p class="mb-0">© 2026 dgashandy. All rights reserved.</p>
         </div>
     </footer>
 
@@ -213,7 +213,7 @@
 
             container.innerHTML = gifts.map(gift => {
                 const badgeHtml = gift.badgeType
-                    ? `<div class="item-badge"><img src="/assets/${gift.badgeType}.svg" alt="${gift.badgeType}" onerror="this.parentElement.style.display='none'"></div>`
+                    ? `<div class="item-badge"><img src="/assets/${gift.badgeType}.svg" alt="${gift.badgeType}"></div>`
                     : '';
                 return `
                 <div class="col-md-6 col-lg-4">

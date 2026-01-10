@@ -71,7 +71,7 @@
 
     <footer class="bg-dark text-white py-4">
         <div class="container text-center">
-            <p class="mb-0">© 2026 Gift Platform. All rights reserved.</p>
+            <p class="mb-0">© 2026 dgashandy. All rights reserved.</p>
         </div>
     </footer>
 
@@ -122,7 +122,7 @@
             const imageUrl = gift.imageUrl || '/assets/image.jpg';
 
             const badgeHtml = gift.badgeType
-                ? `<div class="gift-detail-badge"><img src="/assets/${gift.badgeType}.svg" alt="${gift.badgeType}" onerror="this.parentElement.style.display='none'"></div>`
+                ? `<div class="gift-detail-badge"><img src="/assets/${gift.badgeType}.svg" alt="${gift.badgeType}"></div>`
                 : '';
 
             document.getElementById('giftContent').innerHTML = `

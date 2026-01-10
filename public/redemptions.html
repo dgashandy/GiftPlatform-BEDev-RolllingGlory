@@ -107,7 +107,12 @@
                                         <small>Your Points Balance</small>
                                         <small id="userBalance">0</small>
                                     </div>
-                                    <button class="btn btn-primary w-100 py-3" onclick="redeemAllCart()" id="redeemBtn"
+                                    <button class="btn btn-success w-100 py-3 mb-2" onclick="redeemSelected()"
+                                        id="redeemSelectedBtn" disabled>
+                                        <i class="bi bi-check2-square me-2"></i>Redeem Selected (<span
+                                            id="selectedCount">0</span>)
+                                    </button>
+                                    <button class="btn btn-primary w-100 py-2" onclick="redeemAllCart()" id="redeemBtn"
                                         disabled>
                                         <i class="bi bi-bag-check me-2"></i>Redeem All
                                     </button>
@@ -218,10 +223,19 @@
             document.getElementById('clearBtn').disabled = false;
 
             container.innerHTML = `
+                <div class="px-3 py-2 border-bottom bg-light d-flex align-items-center">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectAll" onchange="toggleSelectAll(this.checked)">
+                        <label class="form-check-label fw-bold" for="selectAll">Select All</label>
+                    </div>
+                </div>
                 <ul class="list-group list-group-flush">
                     ${cart.map((item, index) => `
                         <li class="list-group-item py-3">
                             <div class="d-flex align-items-center">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input cart-item-checkbox" type="checkbox" data-index="${index}" onchange="updateSelectedCount()">
+                                </div>
                                 <img src="${item.gift.imageUrl || '/assets/image.jpg'}" alt="${item.gift.name}" 
                                     class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;" onerror="this.src='/assets/image.jpg'">
                                 <div class="flex-grow-1">
@@ -290,6 +304,88 @@
             localStorage.removeItem('cart');
             loadCart();
             showToast('Cart cleared', 'info');
+        }
+
+        function toggleSelectAll(checked) {
+            const checkboxes = document.querySelectorAll('.cart-item-checkbox');
+            checkboxes.forEach(cb => cb.checked = checked);
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const checkboxes = document.querySelectorAll('.cart-item-checkbox:checked');
+            const count = checkboxes.length;
+            document.getElementById('selectedCount').textContent = count;
+
+            const redeemSelectedBtn = document.getElementById('redeemSelectedBtn');
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+            if (count > 0 && cart.length > 0) {
+                // Calculate selected points
+                let selectedPoints = 0;
+                checkboxes.forEach(cb => {
+                    const index = parseInt(cb.dataset.index);
+                    selectedPoints += cart[index].gift.pointsRequired * cart[index].quantity;
+                });
+                redeemSelectedBtn.disabled = selectedPoints > userPointBalance;
+            } else {
+                redeemSelectedBtn.disabled = true;
+            }
+
+            // Update Select All checkbox state
+            const allCheckboxes = document.querySelectorAll('.cart-item-checkbox');
+            const selectAllCheckbox = document.getElementById('selectAll');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = count === allCheckboxes.length && count > 0;
+            }
+        }
+
+        async function redeemSelected() {
+            const checkboxes = document.querySelectorAll('.cart-item-checkbox:checked');
+            if (checkboxes.length === 0) {
+                showToast('Please select items to redeem', 'warning');
+                return;
+            }
+
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const selectedIndices = Array.from(checkboxes).map(cb => parseInt(cb.dataset.index));
+
+            const redeemSelectedBtn = document.getElementById('redeemSelectedBtn');
+            redeemSelectedBtn.disabled = true;
+            redeemSelectedBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+
+            try {
+                const items = selectedIndices.map(index => ({
+                    giftId: cart[index].giftId,
+                    quantity: cart[index].quantity
+                }));
+
+                await api.post('/gifts/redeem/multiple', { items });
+
+                // Remove redeemed items from cart (in reverse order to preserve indices)
+                selectedIndices.sort((a, b) => b - a).forEach(index => {
+                    cart.splice(index, 1);
+                });
+                localStorage.setItem('cart', JSON.stringify(cart));
+
+                loadCart();
+                loadHistory();
+                loadUserBalance();
+
+                showToast('Selected items redeemed successfully!', 'success');
+
+                if (cart.length === 0) {
+                    const historyTab = new bootstrap.Tab(document.getElementById('history-tab'));
+                    historyTab.show();
+                }
+
+            } catch (error) {
+                showToast(error.message || 'Failed to redeem selected items', 'danger');
+            } finally {
+                redeemSelectedBtn.disabled = false;
+                redeemSelectedBtn.innerHTML = '<i class="bi bi-check2-square me-2"></i>Redeem Selected (<span id="selectedCount">0</span>)';
+                updateSelectedCount();
+            }
         }
 
         async function redeemAllCart() {

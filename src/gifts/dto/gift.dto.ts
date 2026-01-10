@@ -35,6 +35,9 @@ export class CreateGiftDto {
     @IsOptional()
     @IsString()
     imageUrl?: string;
+
+    @IsOptional()
+    isActive?: boolean;
 }
 
 export class UpdateGiftDto {
