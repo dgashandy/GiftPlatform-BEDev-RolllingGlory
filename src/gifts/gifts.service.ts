@@ -94,7 +94,7 @@ export class GiftsService {
 
         const giftsWithStars = gifts.map((gift) => ({
             ...gift,
-            starRating: this.calculateStarRating(gift.avgRating || '0'),
+            avgRating: this.calculateStarRating(gift.avgRating || '0'),
             inStock: gift.stock > 0,
         }));
 
@@ -143,7 +143,7 @@ export class GiftsService {
 
         return {
             ...gift,
-            starRating: this.calculateStarRating(gift.avgRating || '0'),
+            avgRating: this.calculateStarRating(gift.avgRating || '0'),
             inStock: gift.stock > 0,
             recentRatings,
         };
@@ -225,6 +225,23 @@ export class GiftsService {
             throw new BadRequestException(`Insufficient points. Required: ${totalPoints}, Available: ${userBalance}`);
         }
 
+        // Atomic stock update with WHERE clause to prevent race condition
+        const [stockUpdate] = await this.db
+            .update(schema.gifts)
+            .set({
+                stock: sql`stock - ${quantity}`,
+                updatedAt: new Date(),
+            })
+            .where(and(
+                eq(schema.gifts.id, giftId),
+                sql`stock >= ${quantity}`
+            ))
+            .returning();
+
+        if (!stockUpdate) {
+            throw new BadRequestException('Item no longer in stock. Please try again.');
+        }
+
         const [redemption] = await this.db
             .insert(schema.redemptions)
             .values({
@@ -242,14 +259,6 @@ export class GiftsService {
             `Redeemed ${quantity}x ${gift.name}`,
             redemption.id,
         );
-
-        await this.db
-            .update(schema.gifts)
-            .set({
-                stock: gift.stock - quantity,
-                updatedAt: new Date(),
-            })
-            .where(eq(schema.gifts.id, giftId));
 
         return {
             redemption,
@@ -293,6 +302,23 @@ export class GiftsService {
         const redemptions: any[] = [];
 
         for (const { gift, quantity } of validatedItems) {
+            // Atomic stock update with WHERE clause to prevent race condition
+            const [stockUpdate] = await this.db
+                .update(schema.gifts)
+                .set({
+                    stock: sql`stock - ${quantity}`,
+                    updatedAt: new Date(),
+                })
+                .where(and(
+                    eq(schema.gifts.id, gift.id),
+                    sql`stock >= ${quantity}`
+                ))
+                .returning();
+
+            if (!stockUpdate) {
+                throw new BadRequestException(`${gift.name} is no longer in stock. Please try again.`);
+            }
+
             const [redemption] = await this.db
                 .insert(schema.redemptions)
                 .values({
@@ -305,14 +331,6 @@ export class GiftsService {
                 .returning();
 
             redemptions.push(redemption);
-
-            await this.db
-                .update(schema.gifts)
-                .set({
-                    stock: gift.stock - quantity,
-                    updatedAt: new Date(),
-                })
-                .where(eq(schema.gifts.id, gift.id));
         }
 
         await this.usersService.deductPoints(
