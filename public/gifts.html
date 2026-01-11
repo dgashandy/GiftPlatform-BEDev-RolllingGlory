@@ -171,7 +171,6 @@
                     select.appendChild(option);
                 });
             } catch (error) {
-                console.error('Error loading categories:', error);
             }
         }
 
@@ -193,7 +192,6 @@
                 renderGifts(response.data || []);
                 renderPagination(response.meta || {});
             } catch (error) {
-                console.error('Error loading gifts:', error);
             }
         }
 

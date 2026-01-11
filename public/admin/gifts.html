@@ -158,7 +158,6 @@
 
             document.getElementById('userName').textContent = user.name || user.email;
 
-            // Show dashboard link only for admin
             if (user.role !== 'admin') {
                 const adminOnlyLink = document.getElementById('adminOnlyLink');
                 if (adminOnlyLink) adminOnlyLink.classList.add('d-none');
@@ -183,7 +182,6 @@
                     select.appendChild(option);
                 });
             } catch (error) {
-                console.error('Error loading categories:', error);
             }
         }
 
@@ -193,7 +191,6 @@
                 const gifts = response.data || [];
                 renderGiftsTable(gifts);
             } catch (error) {
-                console.error('Error loading gifts:', error);
                 showToast('Failed to load gifts', 'danger');
             }
         }

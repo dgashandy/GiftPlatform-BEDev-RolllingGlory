@@ -1,6 +1,12 @@
 import { pgTable, uuid, varchar, text, integer, decimal, boolean, timestamp, json } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
+export const migrations = pgTable('migrations', {
+  id: integer('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  appliedAt: timestamp('applied_at').defaultNow().notNull(),
+});
+
 export const roles = pgTable('roles', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: varchar('name', { length: 50 }).notNull().unique(),

@@ -81,7 +81,6 @@ const api = {
                 return true;
             }
         } catch (error) {
-            console.error('Token refresh failed:', error);
         }
 
         localStorage.removeItem('accessToken');

@@ -243,19 +243,15 @@
 
             const qty = parseInt(document.getElementById('quantity').value);
 
-            // Get existing cart from localStorage
             let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-            // Check if item already in cart
             const existingIndex = cart.findIndex(item => item.giftId === gift.id);
 
             if (existingIndex >= 0) {
-                // Update quantity (don't exceed stock)
                 const newQty = Math.min(cart[existingIndex].quantity + qty, gift.stock);
                 cart[existingIndex].quantity = newQty;
-                cart[existingIndex].gift = gift; // Update gift details
+                cart[existingIndex].gift = gift;
             } else {
-                // Add new item
                 cart.push({
                     giftId: gift.id,
                     quantity: qty,
@@ -277,7 +273,6 @@
         function updateCartBadge() {
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
             const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-            // Cart badge will be updated on pages that have it
         }
     </script>
 </body>

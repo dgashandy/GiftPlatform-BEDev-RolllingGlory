@@ -195,7 +195,6 @@
                 document.getElementById('userPoints').textContent = formatNumber(userPointBalance);
                 updateCartSummary();
             } catch (error) {
-                console.error('Error loading balance:', error);
             }
         }
 
@@ -321,7 +320,6 @@
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
             if (count > 0 && cart.length > 0) {
-                // Calculate selected points
                 let selectedPoints = 0;
                 checkboxes.forEach(cb => {
                     const index = parseInt(cb.dataset.index);
@@ -332,7 +330,6 @@
                 redeemSelectedBtn.disabled = true;
             }
 
-            // Update Select All checkbox state
             const allCheckboxes = document.querySelectorAll('.cart-item-checkbox');
             const selectAllCheckbox = document.getElementById('selectAll');
             if (selectAllCheckbox) {
@@ -362,7 +359,6 @@
 
                 await api.post('/gifts/redeem/multiple', { items });
 
-                // Remove redeemed items from cart (in reverse order to preserve indices)
                 selectedIndices.sort((a, b) => b - a).forEach(index => {
                     cart.splice(index, 1);
                 });
@@ -411,7 +407,6 @@
 
                 showToast('All items redeemed successfully!', 'success');
 
-                // Switch to history tab
                 const historyTab = new bootstrap.Tab(document.getElementById('history-tab'));
                 historyTab.show();
 

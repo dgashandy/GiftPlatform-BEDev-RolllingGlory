@@ -1,0 +1,48 @@
+{
+    "version": "7",
+    "dialect": "postgresql",
+    "entries": [
+        {
+            "idx": 0,
+            "version": "0001_20260108",
+            "when": 1736294400000,
+            "tag": "initial_schema",
+            "breakpoints": false
+        },
+        {
+            "idx": 1,
+            "version": "0002_20260109",
+            "when": 1736380800000,
+            "tag": "add_oauth_fields",
+            "breakpoints": false
+        },
+        {
+            "idx": 2,
+            "version": "0003_20260109",
+            "when": 1736391600000,
+            "tag": "create_ratings",
+            "breakpoints": false
+        },
+        {
+            "idx": 3,
+            "version": "0004_20260109",
+            "when": 1736402400000,
+            "tag": "add_rating_aggregates",
+            "breakpoints": false
+        },
+        {
+            "idx": 4,
+            "version": "0005_20260110",
+            "when": 1736467200000,
+            "tag": "add_badge_type",
+            "breakpoints": false
+        },
+        {
+            "idx": 5,
+            "version": "0006_20260110",
+            "when": 1736478000000,
+            "tag": "add_user_profile_fields",
+            "breakpoints": false
+        }
+    ]
+}

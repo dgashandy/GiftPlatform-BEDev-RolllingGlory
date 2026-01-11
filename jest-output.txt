@@ -1,0 +1,868 @@
+﻿node.exe : FAIL src/users/u
+sers.service.spec.ts
+At C:\Program 
+Files\nodejs\npx.ps1:29 
+char:3
++   & $NODE_EXE 
+$NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~
+    + CategoryInfo         
+     : NotSpecified: (FAI  
+  L src/users/users.serv   
+ ice.spec.ts:String) []    
+, RemoteException
+    + FullyQualifiedErrorI 
+   d : NativeCommandError
+ 
+  UsersService
+    ΓêÜ should be defined 
+(10 ms)
+    getProfile
+      ΓêÜ should throw 
+NotFoundException if user 
+is not found (12 ms)
+      ├ù should return 
+user profile with point 
+balance (2 ms)
+      ├ù should return 0 
+point balance if no 
+balance record exists (2 
+ms)
+    updateProfile
+      ΓêÜ should throw 
+NotFoundException if user 
+is not found (3 ms)
+      ΓêÜ should update 
+and return user profile (2 
+ms)
+    changePassword
+      ΓêÜ should throw 
+NotFoundException if user 
+is not found (1 ms)
+      ΓêÜ should throw 
+BadRequestException if 
+user has no password 
+(Google user) (2 ms)
+      ΓêÜ should throw 
+BadRequestException if 
+current password is 
+incorrect (2 ms)
+      ΓêÜ should change 
+password successfully (2 
+ms)
+    getPointBalance
+      ├ù should return 0 
+if no balance found (1 ms)
+      ├ù should return the 
+latest balance (2 ms)
+    getPointHistory
+      ├ù should return 
+empty array if no history 
+(1 ms)
+      ├ù should return 
+point history with default 
+limit (1 ms)
+      ├ù should respect 
+custom limit (1 ms)
+    addPoints
+      ├ù should create a 
+credit transaction with 
+new balance (1 ms)
+      ├ù should add points 
+with reference ID (1 ms)
+      ├ù should handle 
+zero balance start (1 ms)
+    deductPoints
+      ├ù should throw 
+BadRequestException if 
+insufficient points (12 ms)
+      ├ù should create a 
+debit transaction (1 ms)
+      ├ù should deduct 
+points with reference ID 
+(1 ms)
+      ├ù should allow 
+exact balance deduction (1 
+ms)
+    getRedemptions
+      ΓêÜ should return 
+empty data if no 
+redemptions (2 ms)
+      ├ù should return 
+redemptions with ratings 
+(1 ms)
+      ├ù should include 
+rating details for rated 
+redemptions (1 ms)
+
+  ΓùÅ UsersService ΓÇ║ 
+getProfile ΓÇ║ should 
+return user profile with 
+point balance
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 116 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 117 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+118 |[39m             [33
+m.[39mlimit([35m1[39m)[
+33m;[39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 119 |[39m
+     [90m 120 |[39m      
+   [36mreturn[39m latestB
+alance[33m?[39m[33m.[39
+mbalanceAfter [33m||[39m 
+[35m0[39m[33m;[39m
+     [90m 121 |[39m     
+}[0m
+
+      at UsersService.getPo
+intBalance (users/users.ser
+vice.ts:118:14)
+      at 
+UsersService.getProfile (us
+ers/users.service.ts:38:41)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:77:28)
+
+  ΓùÅ UsersService ΓÇ║ 
+getProfile ΓÇ║ should 
+return 0 point balance if 
+no balance record exists
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 116 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 117 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+118 |[39m             [33
+m.[39mlimit([35m1[39m)[
+33m;[39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 119 |[39m
+     [90m 120 |[39m      
+   [36mreturn[39m latestB
+alance[33m?[39m[33m.[39
+mbalanceAfter [33m||[39m 
+[35m0[39m[33m;[39m
+     [90m 121 |[39m     
+}[0m
+
+      at UsersService.getPo
+intBalance (users/users.ser
+vice.ts:118:14)
+      at 
+UsersService.getProfile (us
+ers/users.service.ts:38:41)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:96:28)
+
+  ΓùÅ UsersService ΓÇ║ 
+getPointBalance ΓÇ║ should 
+return 0 if no balance 
+found
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 116 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 117 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+118 |[39m             [33
+m.[39mlimit([35m1[39m)[
+33m;[39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 119 |[39m
+     [90m 120 |[39m      
+   [36mreturn[39m latestB
+alance[33m?[39m[33m.[39
+mbalanceAfter [33m||[39m 
+[35m0[39m[33m;[39m
+     [90m 121 |[39m     
+}[0m
+
+      at UsersService.getPo
+intBalance (users/users.ser
+vice.ts:118:14)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:175:43
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+getPointBalance ΓÇ║ should 
+return the latest balance
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 116 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 117 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+118 |[39m             [33
+m.[39mlimit([35m1[39m)[
+33m;[39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 119 |[39m
+     [90m 120 |[39m      
+   [36mreturn[39m latestB
+alance[33m?[39m[33m.[39
+mbalanceAfter [33m||[39m 
+[35m0[39m[33m;[39m
+     [90m 121 |[39m     
+}[0m
+
+      at UsersService.getPo
+intBalance (users/users.ser
+vice.ts:118:14)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:181:43
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+getPointHistory ΓÇ║ should 
+return empty array if no 
+history
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 127 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 128 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+129 |[39m             [33
+m.[39mlimit(limit)[33m;[
+39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 130 |[39m
+     [90m 131 |[39m      
+   [36mreturn[39m 
+history[33m;[39m
+     [90m 132 |[39m     
+}[0m
+
+      at UsersService.getPo
+intHistory (users/users.ser
+vice.ts:129:14)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:189:43
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+getPointHistory ΓÇ║ should 
+return point history with 
+default limit
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 127 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 128 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+129 |[39m             [33
+m.[39mlimit(limit)[33m;[
+39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 130 |[39m
+     [90m 131 |[39m      
+   [36mreturn[39m 
+history[33m;[39m
+     [90m 132 |[39m     
+}[0m
+
+      at UsersService.getPo
+intHistory (users/users.ser
+vice.ts:129:14)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:200:43
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+getPointHistory ΓÇ║ should 
+respect custom limit
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 127 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 128 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+129 |[39m             [33
+m.[39mlimit(limit)[33m;[
+39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 130 |[39m
+     [90m 131 |[39m      
+   [36mreturn[39m 
+history[33m;[39m
+     [90m 132 |[39m     
+}[0m
+
+      at UsersService.getPo
+intHistory (users/users.ser
+vice.ts:129:14)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:207:27
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+addPoints ΓÇ║ should 
+create a credit 
+transaction with new 
+balance
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 116 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 117 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+118 |[39m             [33
+m.[39mlimit([35m1[39m)[
+33m;[39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 119 |[39m
+     [90m 120 |[39m      
+   [36mreturn[39m latestB
+alance[33m?[39m[33m.[39
+mbalanceAfter [33m||[39m 
+[35m0[39m[33m;[39m
+     [90m 121 |[39m     
+}[0m
+
+      at UsersService.getPo
+intBalance (users/users.ser
+vice.ts:118:14)
+      at 
+UsersService.addPoints (use
+rs/users.service.ts:135:43)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:217:42
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+addPoints ΓÇ║ should add 
+points with reference ID
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 116 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 117 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+118 |[39m             [33
+m.[39mlimit([35m1[39m)[
+33m;[39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 119 |[39m
+     [90m 120 |[39m      
+   [36mreturn[39m latestB
+alance[33m?[39m[33m.[39
+mbalanceAfter [33m||[39m 
+[35m0[39m[33m;[39m
+     [90m 121 |[39m     
+}[0m
+
+      at UsersService.getPo
+intBalance (users/users.ser
+vice.ts:118:14)
+      at 
+UsersService.addPoints (use
+rs/users.service.ts:135:43)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:228:42
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+addPoints ΓÇ║ should 
+handle zero balance start
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 116 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 117 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+118 |[39m             [33
+m.[39mlimit([35m1[39m)[
+33m;[39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 119 |[39m
+     [90m 120 |[39m      
+   [36mreturn[39m latestB
+alance[33m?[39m[33m.[39
+mbalanceAfter [33m||[39m 
+[35m0[39m[33m;[39m
+     [90m 121 |[39m     
+}[0m
+
+      at UsersService.getPo
+intBalance (users/users.ser
+vice.ts:118:14)
+      at 
+UsersService.addPoints (use
+rs/users.service.ts:135:43)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:237:42
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+deductPoints ΓÇ║ should 
+throw BadRequestException 
+if insufficient points
+
+    expect(received).reject
+s.toThrow(expected)
+
+    Expected substring: 
+"Insufficient points"
+    Received message:   "th
+is.db.select(...).from(...)
+.where(...).orderBy(...).li
+mit is not a function"
+
+        [0m [90m 116 
+|[39m             [33m.[
+39mwhere(eq(schema[33m.[3
+9mpointBalance[33m.[39mus
+erId[33m,[39m userId))
+         [90m 117 |[39m  
+           [33m.[39morder
+By(desc(schema[33m.[39mpo
+intBalance[33m.[39mcreate
+dAt))
+        
+[31m[1m>[22m[39m[90m 
+118 |[39m             [33
+m.[39mlimit([35m1[39m)[
+33m;[39m
+         [90m     |[39m  
+            
+[31m[1m^[22m[39m
+         [90m 119 |[39m
+         [90m 120 |[39m  
+       [36mreturn[39m lat
+estBalance[33m?[39m[33m.
+[39mbalanceAfter 
+[33m||[39m 
+[35m0[39m[33m;[39m
+         [90m 121 |[39m  
+   }[0m
+
+      at UsersService.getPo
+intBalance (users/users.ser
+vice.ts:118:14)
+      at 
+UsersService.deductPoints (
+users/users.service.ts:154:
+43)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:248:25
+)
+      at Object.toThrow (..
+/node_modules/expect/build/
+index.js:2155:20)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:249:23
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+deductPoints ΓÇ║ should 
+create a debit transaction
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 116 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 117 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+118 |[39m             [33
+m.[39mlimit([35m1[39m)[
+33m;[39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 119 |[39m
+     [90m 120 |[39m      
+   [36mreturn[39m latestB
+alance[33m?[39m[33m.[39
+mbalanceAfter [33m||[39m 
+[35m0[39m[33m;[39m
+     [90m 121 |[39m     
+}[0m
+
+      at UsersService.getPo
+intBalance (users/users.ser
+vice.ts:118:14)
+      at 
+UsersService.deductPoints (
+users/users.service.ts:154:
+43)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:256:42
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+deductPoints ΓÇ║ should 
+deduct points with 
+reference ID
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 116 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 117 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+118 |[39m             [33
+m.[39mlimit([35m1[39m)[
+33m;[39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 119 |[39m
+     [90m 120 |[39m      
+   [36mreturn[39m latestB
+alance[33m?[39m[33m.[39
+mbalanceAfter [33m||[39m 
+[35m0[39m[33m;[39m
+     [90m 121 |[39m     
+}[0m
+
+      at UsersService.getPo
+intBalance (users/users.ser
+vice.ts:118:14)
+      at 
+UsersService.deductPoints (
+users/users.service.ts:154:
+43)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:266:42
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+deductPoints ΓÇ║ should 
+allow exact balance 
+deduction
+
+    TypeError: this.db.sele
+ct(...).from(...).where(...
+).orderBy(...).limit is 
+not a function
+
+    [0m [90m 116 |[39m  
+           [33m.[39mwhere
+(eq(schema[33m.[39mpointB
+alance[33m.[39muserId[33
+m,[39m userId))
+     [90m 117 |[39m      
+       [33m.[39morderBy(d
+esc(schema[33m.[39mpointB
+alance[33m.[39mcreatedAt)
+)
+    
+[31m[1m>[22m[39m[90m 
+118 |[39m             [33
+m.[39mlimit([35m1[39m)[
+33m;[39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 119 |[39m
+     [90m 120 |[39m      
+   [36mreturn[39m latestB
+alance[33m?[39m[33m.[39
+mbalanceAfter [33m||[39m 
+[35m0[39m[33m;[39m
+     [90m 121 |[39m     
+}[0m
+
+      at UsersService.getPo
+intBalance (users/users.ser
+vice.ts:118:14)
+      at 
+UsersService.deductPoints (
+users/users.service.ts:154:
+43)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:275:42
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+getRedemptions ΓÇ║ should 
+return redemptions with 
+ratings
+
+    TypeError: this.db.sele
+ct(...).from(...).leftJoin(
+...).where(...).orderBy is 
+not a function
+
+    [0m [90m 191 |[39m  
+           [33m.[39mleftJ
+oin(schema[33m.[39mgifts
+[33m,[39m eq(schema[33m.
+[39mredemptions[33m.[39mg
+iftId[33m,[39m schema[33
+m.[39mgifts[33m.[39mid))
+     [90m 192 |[39m      
+       [33m.[39mwhere(eq(
+schema[33m.[39mredemption
+s[33m.[39muserId[33m,[3
+9m userId))
+    
+[31m[1m>[22m[39m[90m 
+193 |[39m             [33
+m.[39morderBy(desc(schema
+[33m.[39mredemptions[33m.
+[39mcreatedAt))[33m;[39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 194 |[39m
+     [90m 195 |[39m      
+   [36mconst[39m 
+redemptionIds [33m=[39m r
+edemptions[33m.[39mmap((r
+[33m:[39m any) 
+[33m=>[39m 
+r[33m.[39mid)[33m;[39m
+     [90m 196 |[39m[0m
+
+      at UsersService.getRe
+demptions (users/users.serv
+ice.ts:193:14)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:304:42
+)
+
+  ΓùÅ UsersService ΓÇ║ 
+getRedemptions ΓÇ║ should 
+include rating details for 
+rated redemptions
+
+    TypeError: this.db.sele
+ct(...).from(...).leftJoin(
+...).where(...).orderBy is 
+not a function
+
+    [0m [90m 191 |[39m  
+           [33m.[39mleftJ
+oin(schema[33m.[39mgifts
+[33m,[39m eq(schema[33m.
+[39mredemptions[33m.[39mg
+iftId[33m,[39m schema[33
+m.[39mgifts[33m.[39mid))
+     [90m 192 |[39m      
+       [33m.[39mwhere(eq(
+schema[33m.[39mredemption
+s[33m.[39muserId[33m,[3
+9m userId))
+    
+[31m[1m>[22m[39m[90m 
+193 |[39m             [33
+m.[39morderBy(desc(schema
+[33m.[39mredemptions[33m.
+[39mcreatedAt))[33m;[39m
+     [90m     |[39m      
+        
+[31m[1m^[22m[39m
+     [90m 194 |[39m
+     [90m 195 |[39m      
+   [36mconst[39m 
+redemptionIds [33m=[39m r
+edemptions[33m.[39mmap((r
+[33m:[39m any) 
+[33m=>[39m 
+r[33m.[39mid)[33m;[39m
+     [90m 196 |[39m[0m
+
+      at UsersService.getRe
+demptions (users/users.serv
+ice.ts:193:14)
+      at 
+Object.<anonymous> (users/u
+sers.service.spec.ts:322:42
+)
+
+Test Suites: 1 failed, 1 
+total
+Tests:       16 failed, 9 
+passed, 25 total
+Snapshots:   0 total
+Time:        0.949 s, 
+estimated 2 s
+Ran all test suites 
+matching src/users/users.se
+rvice.spec.ts.

@@ -39,7 +39,6 @@ function checkAuth() {
         if (user) {
             document.getElementById('userName').textContent = user.name || user.email;
 
-            // Show admin links for admin/support users
             if (user.role === 'admin' || user.role === 'support') {
                 const editGiftsLink = document.getElementById('editGiftsLink');
                 if (editGiftsLink) editGiftsLink.classList.remove('d-none');
@@ -65,7 +64,6 @@ async function loadUserPoints() {
             pointsEl.textContent = formatNumber(response.data?.balance || response.balance || 0);
         }
     } catch (error) {
-        console.error('Error loading points:', error);
     }
 }
 

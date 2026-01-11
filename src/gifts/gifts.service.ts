@@ -225,7 +225,6 @@ export class GiftsService {
             throw new BadRequestException(`Insufficient points. Required: ${totalPoints}, Available: ${userBalance}`);
         }
 
-        // Atomic stock update with WHERE clause to prevent race condition
         const [stockUpdate] = await this.db
             .update(schema.gifts)
             .set({
@@ -302,7 +301,6 @@ export class GiftsService {
         const redemptions: any[] = [];
 
         for (const { gift, quantity } of validatedItems) {
-            // Atomic stock update with WHERE clause to prevent race condition
             const [stockUpdate] = await this.db
                 .update(schema.gifts)
                 .set({
@@ -384,7 +382,6 @@ export class GiftsService {
             })
             .returning();
 
-        // Get current gift data to include seeded avgRating/totalReviews that may not have ratings table entries
         const [currentGift] = await this.db
             .select({
                 avgRating: schema.gifts.avgRating,
@@ -394,7 +391,6 @@ export class GiftsService {
             .where(eq(schema.gifts.id, giftId))
             .limit(1);
 
-        // Get actual ratings from table
         const ratingStats = await this.db
             .select({
                 avgRating: sql<string>`AVG(${schema.ratings.stars})::numeric(3,2)`,
@@ -406,20 +402,17 @@ export class GiftsService {
         const actualRatingsCount = Number(ratingStats[0].totalReviews) || 0;
         const actualAvgRating = parseFloat(ratingStats[0].avgRating) || 0;
 
-        // Check if gift had pre-seeded reviews that aren't in ratings table
-        const seededReviewsCount = (currentGift?.totalReviews || 0) - actualRatingsCount + 1; // +1 because we just added one
+        const seededReviewsCount = (currentGift?.totalReviews || 0) - actualRatingsCount + 1;
 
         let newAvgRating: number;
         let newTotalReviews: number;
 
         if (seededReviewsCount > 0 && actualRatingsCount === 1) {
-            // First real rating on a seeded gift - blend with seeded data
             const seededAvg = parseFloat(currentGift?.avgRating || '0');
             const seededCount = currentGift?.totalReviews || 0;
             newTotalReviews = seededCount + 1;
             newAvgRating = ((seededAvg * seededCount) + ratingDto.stars) / newTotalReviews;
         } else {
-            // All ratings are real, just use actual stats
             newAvgRating = actualAvgRating;
             newTotalReviews = actualRatingsCount;
         }

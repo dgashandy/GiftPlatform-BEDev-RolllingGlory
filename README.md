@@ -20,6 +20,18 @@ A gift redemption platform API built with NestJS, Drizzle ORM, and PostgreSQL.
 | Development | Docker     | Local      |
 | Production  | Docker     | Docker     |
 
+## Feature Modules
+
+| Module | Path | Description |
+|--------|------|-------------|
+| **Auth** | `src/auth/` | JWT, Google OAuth, Email OTP authentication |
+| **Users** | `src/users/` | Profile, points balance, redemption history |
+| **Gifts** | `src/gifts/` | CRUD, redeem, ratings |
+| **Database** | `src/database/` | Drizzle ORM connection (global module) |
+| **Common** | `src/common/` | Pagination utilities |
+
+Each module uses **Controller → Service → Database** pattern with DTOs for validation.
+
 ---
 
 ## User Roles
@@ -53,8 +65,8 @@ npm install
 # 3. Setup environment (copy and edit as needed)
 cp .env.example .env
 
-# 4. Push database schema
-npm run db:push
+# 4. Run database migrations
+npm run db:migrate
 
 # 5. Seed database with sample data
 npm run db:seed
@@ -82,7 +94,7 @@ docker-compose -f docker-compose.prod.yml up -d --build
 docker-compose -f docker-compose.prod.yml logs -f postgres
 
 # 3. Run database migrations (inside API container)
-docker exec gift_platform_api npm run db:push
+docker exec gift_platform_api npm run db:migrate
 
 # 4. Seed the database (inside API container)
 docker exec gift_platform_api npm run db:seed
@@ -97,8 +109,8 @@ docker-compose up -d
 # 2. Build the app
 npm run build
 
-# 3. Push database schema
-npm run db:push
+# 3. Run database migrations
+npm run db:migrate
 
 # 4. Seed the database
 npm run db:seed
@@ -137,7 +149,9 @@ docker-compose -f docker-compose.prod.yml down -v
 | `npm run build` | Build for production |
 | `npm run test` | Run unit tests |
 | `npm run test:e2e` | Run e2e tests |
-| `npm run db:push` | Push schema to database |
+| `npm run db:generate` | Generate migration from schema changes |
+| `npm run db:migrate` | Apply pending migrations |
+| `npm run db:push` | Push schema directly (dev only) |
 | `npm run db:seed` | Seed database |
 | `npm run db:studio` | Open Drizzle Studio |
 

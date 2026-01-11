@@ -28,7 +28,7 @@ Aplikasi ini mengikuti **Modular Layered Architecture**:
 PostgreSQL dipilih daripada MySQL karena beberapa keunggulan teknis kritis:
 1. **Dukungan Native UUID**: Penanganan UUID sebagai primary key yang efisien tanpa overhead performa CHAR(36) seperti di MySQL.
 2. **Tipe Data JSONB**: Penyimpanan JSON biner yang sangat efisien dan dapat diindeks untuk izin pengguna dan metadata fleksibel.
-3. **Kepatuhan ACID & MVCC**: Penanganan konkurensi yang unggul, sangat penting untuk konsistensi transaksi poin dan penebusan (redemption).
+3. **Kepatuhan ACID & MVCC**: Penanganan konkurensi yang unggul, sangat penting untuk konsistensi transaksi poin dan redemption (redemption).
 4. **Presisi**: Penanganan tipe DECIMAL/NUMERIC yang lebih baik untuk perhitungan rating yang akurat.
 
 ### Optimasi Database
@@ -40,7 +40,7 @@ PostgreSQL dipilih daripada MySQL karena beberapa keunggulan teknis kritis:
 
 ---
 
-## 3. T Injauan Modul
+## 3. Tinjauan Modul
 
 ### Modul Auth
 Menangani akses aman ke platform melalui beberapa metode:
@@ -53,20 +53,16 @@ Menangani akses aman ke platform melalui beberapa metode:
 Mengelola data pengguna dan ekonomi poin:
 - **Manajemen Profil**: CRUD aman untuk detail pengguna dan perubahan kata sandi.
 - **Sistem Poin**: Buku besar append-only (`point_balance`) yang melacak setiap kredit dan debit dengan riwayat audit.
-- **Riwayat Penebusan**: Melacak klaim hadiah pengguna di masa lalu dan status mereka saat ini.
+- **Riwayat redemption**: Melacak klaim hadiah pengguna di masa lalu dan status mereka saat ini.
 
 ### Modul Gifts
 Katalog inti dan mesin transaksi:
 - **CRUD Gift**: Dikelola oleh admin/support dengan dukungan gambar, kategori, dan lencana (badge).
-- **Logika Penebusan**: Logika transaksional thread-safe yang memotong poin dan memperbarui stok secara bersamaan.
-- **Sistem Rating**: Sistem ulasan terintegrasi yang memerlukan bukti penebusan untuk mencegah ulasan palsu.
+- **Logika redemption**: Logika transaksional thread-safe yang memotong poin dan memperbarui stok secara bersamaan.
+- **Sistem Rating**: Sistem ulasan terintegrasi yang memerlukan bukti redemption untuk mencegah ulasan palsu.
 - **Filter Kategori**: Penjelajahan terorganisir melalui kategori berbasis slug.
 
 ### Modul Database
 Dikelola melalui **Drizzle ORM** dan **Drizzle Kit**:
 - **Single Source of Truth**: `schema.ts` mendefinisikan semua tabel dan relasi.
 - **Migrasi yang Disederhanakan**: Menggunakan `db:push` untuk pengembangan dan migrasi SQL versi untuk pelacakan produksi.
-
----
-
-*Dokumentasi ini dikelola sebagai satu-satunya sumber kebenaran untuk arsitektur teknis proyek.*
