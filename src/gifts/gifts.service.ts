@@ -404,17 +404,44 @@ export class GiftsService {
 
         const seededReviewsCount = (currentGift?.totalReviews || 0) - actualRatingsCount + 1;
 
+        // Get the original seeded values (before any user ratings)
+        // We need to track the base seeded count separately
+        const [firstRating] = await this.db
+            .select({ createdAt: schema.ratings.createdAt })
+            .from(schema.ratings)
+            .where(eq(schema.ratings.giftId, giftId))
+            .orderBy(asc(schema.ratings.createdAt))
+            .limit(1);
+
+        // If this is the first ever rating, remember the original seeded count
+        let originalSeededCount = 0;
+        let originalSeededAvg = 0;
+
+        if (actualRatingsCount === 1) {
+            // First rating being added - save the original seeded values
+            originalSeededCount = currentGift?.totalReviews || 0;
+            originalSeededAvg = parseFloat(currentGift?.avgRating || '0');
+        } else {
+            // Calculate what the original seeded count was
+            // originalSeededCount = currentTotalReviews - (actualRatingsCount - 1)
+            // But we need to track this properly. For now, we'll use a simpler approach.
+        }
+
         let newAvgRating: number;
         let newTotalReviews: number;
 
-        if (seededReviewsCount > 0 && actualRatingsCount === 1) {
-            const seededAvg = parseFloat(currentGift?.avgRating || '0');
-            const seededCount = currentGift?.totalReviews || 0;
-            newTotalReviews = seededCount + 1;
-            newAvgRating = ((seededAvg * seededCount) + ratingDto.stars) / newTotalReviews;
+        // Simple fix: always add to the current total, never replace
+        const currentTotalReviews = currentGift?.totalReviews || 0;
+        const currentAvgRating = parseFloat(currentGift?.avgRating || '0');
+
+        if (actualRatingsCount === 1) {
+            // First user rating - add to seeded data
+            newTotalReviews = currentTotalReviews + 1;
+            newAvgRating = ((currentAvgRating * currentTotalReviews) + ratingDto.stars) / newTotalReviews;
         } else {
-            newAvgRating = actualAvgRating;
-            newTotalReviews = actualRatingsCount;
+            // Subsequent ratings - increment and recalculate
+            newTotalReviews = currentTotalReviews + 1;
+            newAvgRating = ((currentAvgRating * currentTotalReviews) + ratingDto.stars) / newTotalReviews;
         }
 
         await this.db
