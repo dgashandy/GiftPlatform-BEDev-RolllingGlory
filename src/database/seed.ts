@@ -51,6 +51,25 @@ async function seed() {
 
         console.log('✅ Support user created:', supportUser.email);
 
+        console.log('📝 Adding initial points...');
+        await db.insert(schema.pointBalance).values([
+            {
+                userId: adminUser.id,
+                transactionType: 'credit',
+                amount: 1000,
+                balanceAfter: 1000,
+                description: 'Initial balance',
+            },
+            {
+                userId: supportUser.id,
+                transactionType: 'credit',
+                amount: 1000,
+                balanceAfter: 1000,
+                description: 'Initial balance',
+            },
+        ]);
+        console.log('✅ Initial points added: 1000 pts each');
+
         console.log('📝 Seeding categories...');
         const categoryData = [
             { name: 'Electronics', slug: 'electronics' },

@@ -66,7 +66,7 @@ npm install
 cp .env.example .env
 
 # 4. Run database migrations
-npm run db:migrate
+npx ts-node src/database/migrate.ts
 
 # 5. Seed database with sample data
 npm run db:seed
