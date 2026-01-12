@@ -12,23 +12,18 @@ async function seed() {
     const db = drizzle(pool, { schema });
 
     try {
-        console.log('📝 Seeding roles...');
-        const [adminRole] = await db.insert(schema.roles).values({
-            name: 'admin',
-            permissions: ['*'],
-        }).returning();
+        console.log('📝 Fetching roles...');
+        const existingRoles = await db.select().from(schema.roles);
 
-        const [supportRole] = await db.insert(schema.roles).values({
-            name: 'support',
-            permissions: ['gifts:read', 'gifts:create', 'gifts:update', 'users:read'],
-        }).returning();
+        const adminRole = existingRoles.find(r => r.name === 'admin');
+        const supportRole = existingRoles.find(r => r.name === 'support');
+        const userRole = existingRoles.find(r => r.name === 'user');
 
-        const [userRole] = await db.insert(schema.roles).values({
-            name: 'user',
-            permissions: ['gifts:read', 'gifts:redeem', 'ratings:create', 'profile:update'],
-        }).returning();
+        if (!adminRole || !supportRole || !userRole) {
+            throw new Error('Required roles not found. Make sure migrations have been run.');
+        }
 
-        console.log('✅ Roles created:', adminRole.name, supportRole.name, userRole.name);
+        console.log('✅ Roles found:', adminRole.name, supportRole.name, userRole.name);
 
         console.log('📝 Seeding admin user...');
         const passwordHash = await bcrypt.hash('admin123', 10);

@@ -82,44 +82,23 @@ Open http://localhost:3000
 
 ---
 
-## Production Setup
-
-### Option 1: Full Docker (Recommended)
+## Production Setup (Docker)
 
 ```bash
 # 1. Build and start all containers (PostgreSQL + API)
 docker-compose -f docker-compose.prod.yml up -d --build
 
-# 2. Wait for database to be ready (check logs)
-docker-compose -f docker-compose.prod.yml logs -f postgres
+# 2. Run database migrations
+docker exec gift_platform_api npm run migration:run
 
-# 3. Run database migrations (inside API container)
-docker exec gift_platform_api npm run db:migrate
+# 3. Seed the database with initial data
+docker exec gift_platform_api node dist/database/seed.js
 
-# 4. Seed the database (inside API container)
-docker exec gift_platform_api npm run db:seed
+# 4. Verify the app is running
+curl http://localhost:3000/
 ```
 
-### Option 2: Docker DB + Local API
-
-```bash
-# 1. Start only PostgreSQL in Docker
-docker-compose up -d
-
-# 2. Build the app
-npm run build
-
-# 3. Run database migrations
-npm run db:migrate
-
-# 4. Seed the database
-npm run db:seed
-
-# 5. Start production server
-npm run start:prod
-```
-
-### Production Commands
+### Useful Commands
 
 ```bash
 # View API logs
@@ -134,8 +113,25 @@ docker-compose -f docker-compose.prod.yml up -d --build api
 # Stop all services
 docker-compose -f docker-compose.prod.yml down
 
-# Stop and remove volumes (WARNING: deletes data)
+# Stop and remove volumes (WARNING: deletes all data!)
 docker-compose -f docker-compose.prod.yml down -v
+
+# Connect to database via DBeaver/pgAdmin
+# Host: localhost, Port: 5432, Database: gift_platform
+```
+
+### Resetting Production Database
+
+```bash
+# Stop containers and remove volumes
+docker-compose -f docker-compose.prod.yml down -v
+
+# Rebuild and start fresh
+docker-compose -f docker-compose.prod.yml up -d --build
+
+# Re-run migrations and seed
+docker exec gift_platform_api npm run migration:run
+docker exec gift_platform_api node dist/database/seed.js
 ```
 
 ---

@@ -246,7 +246,7 @@
         }
 
         function createGiftCard(gift) {
-            const stars = renderStars(gift.starRating || 0);
+            const stars = renderStars(gift.avgRating || 0);
             const stockBadge = gift.inStock
                 ? '<span class="badge bg-success">In Stock</span>'
                 : '<span class="badge bg-danger">Sold Out</span>';
