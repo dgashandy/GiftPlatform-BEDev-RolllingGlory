@@ -26,8 +26,9 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   await app.listen(port);
 
-  console.log(`🚀 Application running on: http://localhost:${port}`);
-  console.log(`📚 API endpoints available at: http://localhost:${port}/auth, /users, /gifts`);
+  const appUrl = process.env.APP_URL || `http://localhost:${port}`;
+  console.log(`🚀 Application running on: ${appUrl}`);
+  console.log(`📚 API endpoints available at: ${appUrl}/auth, /users, /gifts`);
 }
 
 bootstrap();
