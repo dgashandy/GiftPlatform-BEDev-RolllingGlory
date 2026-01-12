@@ -1,20 +1,18 @@
-# Deploying to Dokploy
+# Deploying to Dokploy (Compose Method)
 
-This guide walks you through deploying the Gift Platform API to **Dokploy**.
+This guide walks you through deploying the Gift Platform API using **Dokploy's Compose service**.
 
 ## Prerequisites
 
 1. **Dokploy Server** - A running Dokploy instance on your VPS
 2. **Domain configured** - `dgift-rgb.rnv.lol` pointing to your Dokploy server IP
-3. **Git repository** - Push this project to GitHub, GitLab, or another Git provider
+3. **Git repository** - Push PROD branch to GitHub
 
 ---
 
 ## Step 1: Push PROD Branch to Git
 
 ```bash
-git add .
-git commit -m "Configure for production deployment"
 git push origin PROD
 ```
 
@@ -24,113 +22,111 @@ git push origin PROD
 
 1. **Login** to your Dokploy dashboard
 2. Go to **Projects** → Click **"Create Project"**
-3. Name it: `Gift Platform` or similar
+3. Name it: `Gift Platform`
 4. Click **Create**
 
 ---
 
-## Step 3: Create PostgreSQL Database
+## Step 3: Create Compose Service
 
-1. Inside your project, click **"Create Service"** → Select **"PostgreSQL"**
-2. Configure the database:
-   - **Name**: `gift-platform-db`
-   - **Database Name**: `gift_platform`
-   - **Username**: `postgres`
-   - **Password**: Use a strong password (save this for later!)
-3. Click **Deploy**
-4. Wait for the database to be healthy
+1. Inside your project, click **"Create Service"** → Select **"Compose"**
+2. Name it: `gift-platform`
 
-> **Note**: Copy the internal hostname from the database service info (usually `gift-platform-db` or similar).
+### Configure Git Source
 
----
-
-## Step 4: Create the Application Service
-
-1. Inside your project, click **"Create Service"** → Select **"Application"**
-2. Name it: `gift-platform-api`
-
-### Configure Git Provider
-
-1. Select **"Git"** tab
-2. Choose your Git provider (GitHub, GitLab, etc.)
-3. Enter repository details:
-   - **Repository**: Your repository URL
-   - **Branch**: `PROD`
-   - **Build Path**: `/` (root)
-
-### Configure Build Settings
-
-Dokploy will auto-detect the Dockerfile. If not:
-- **Build Type**: Dockerfile
-- **Dockerfile Path**: `Dockerfile`
+1. Select **"Git"** as the source
+2. Choose your **GitHub provider**
+3. Select **Repository**: `RollingGloryBackEnd`
+4. **Branch**: `PROD`
+5. **Compose Path**: `docker-compose.prod.yml`
 
 ---
 
-## Step 5: Configure Environment Variables
+## Step 4: Configure Environment Variables
 
-In the application service, go to **"Environment"** tab and add:
+In the Compose service, go to **"Environment"** tab and add these variables:
 
-| Variable | Value | Description |
-|----------|-------|-------------|
-| `NODE_ENV` | `production` | Production mode |
-| `PORT` | `3000` | App port |
-| `APP_URL` | `https://dgift-rgb.rnv.lol` | Your domain |
-| `DATABASE_URL` | `postgresql://postgres:YOUR_PASSWORD@gift-platform-db:5432/gift_platform` | Internal DB connection |
-| `JWT_SECRET` | `<generate-strong-secret>` | JWT signing key |
-| `JWT_EXPIRES_IN` | `15m` | Token expiration |
-| `JWT_REFRESH_SECRET` | `<generate-strong-secret>` | Refresh token key |
-| `JWT_REFRESH_EXPIRES_IN` | `7d` | Refresh expiration |
-| `FRONTEND_URL` | `https://dgift-rgb.rnv.lol` | CORS origin |
-| `GOOGLE_CLIENT_ID` | Your Google OAuth client ID | OAuth |
-| `GOOGLE_CLIENT_SECRET` | Your Google OAuth secret | OAuth |
-| `GOOGLE_CALLBACK_URL` | `https://dgift-rgb.rnv.lol/auth/google/callback` | OAuth callback |
-| `MAIL_HOST` | `smtp.gmail.com` | SMTP host |
-| `MAIL_PORT` | `587` | SMTP port |
-| `MAIL_USER` | Your email | SMTP user |
-| `MAIL_PASSWORD` | Your app password | SMTP password |
-| `MAIL_FROM` | `"Gift Platform <noreply@giftplatform.com>"` | Email sender |
+```env
+# Required - Generate secure secrets!
+JWT_SECRET=your-64-char-random-secret-here
+JWT_REFRESH_SECRET=your-64-char-random-refresh-secret-here
 
-### Generate Secure Secrets
+# Optional - Override defaults if needed
+DATABASE_URL=postgresql://postgres:postgres123@postgres:5432/gift_platform
+APP_URL=https://dgift-rgb.rnv.lol
+FRONTEND_URL=https://dgift-rgb.rnv.lol
 
-Use this command to generate JWT secrets:
+# Google OAuth (if using)
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_CALLBACK_URL=https://dgift-rgb.rnv.lol/auth/google/callback
+
+# Mail (if using OTP)
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USER=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_FROM="Gift Platform <noreply@giftplatform.com>"
+```
+
+### Generate Secure JWT Secrets
+
+Run this in your local terminal:
 ```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ```
 
 ---
 
+## Step 5: Deploy
+
+1. Click **"Deploy"** button
+2. Watch the build logs
+3. Wait for all services to show as **Running**
+
+---
+
 ## Step 6: Configure Domain & SSL
 
-1. Go to **"Domains"** tab in your application service
+1. Go to the **"Domains"** tab in your Compose service
 2. Click **"Add Domain"**
-3. Enter: `dgift-rgb.rnv.lol`
-4. **Container Port**: `3000`
-5. Enable **HTTPS** (Let's Encrypt will auto-provision SSL)
-6. Click **Save**
+3. Configure:
+   - **Service Name**: `api` (matches the service name in docker-compose.prod.yml)
+   - **Domain**: `dgift-rgb.rnv.lol`
+   - **Container Port**: `3000`
+   - **HTTPS**: Enable (Let's Encrypt auto-provisions SSL)
+4. Click **Save**
 
 ---
 
-## Step 7: Deploy
+## Step 7: Initialize Database
 
-1. Click the **"Deploy"** button
-2. Watch the build logs for any errors
-3. Wait for deployment to complete (status: Running)
+After first deployment, you need to run migrations.
 
----
-
-## Step 8: Initialize Database
-
-After first deployment, run database migrations:
-
-1. Go to **"Advanced"** → **"Terminal"** in your app service
-2. Run:
+### Option A: Using Dokploy Terminal
+1. In your Compose service, find **Terminal** or **Console** option
+2. Select the `api` container
+3. Run:
    ```bash
    npm run db:push
+   npm run db:seed  # Optional: seed initial data
    ```
-3. (Optional) Seed initial data:
-   ```bash
-   npm run db:seed
-   ```
+
+### Option B: Via SSH to VPS
+```bash
+# SSH into your server
+ssh user@your-server-ip
+
+# Find the API container
+docker ps | grep gift_platform_api
+
+# Execute into container
+docker exec -it gift_platform_api sh
+
+# Run migrations
+npm run db:push
+npm run db:seed
+```
 
 ---
 
@@ -142,7 +138,7 @@ Test your deployment:
 # Health check
 curl https://dgift-rgb.rnv.lol/
 
-# Test auth endpoint
+# Test login (after seeding)
 curl https://dgift-rgb.rnv.lol/auth/login -X POST \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@giftplatform.com","password":"admin123"}'
@@ -152,57 +148,30 @@ curl https://dgift-rgb.rnv.lol/auth/login -X POST \
 
 ## Troubleshooting
 
+### Build Fails
+- Check logs tab for error details
+- Verify `docker-compose.prod.yml` exists in PROD branch
+- Ensure Dockerfile is valid
+
 ### Database Connection Issues
-- Verify `DATABASE_URL` uses the internal service name (not `localhost`)
-- Check PostgreSQL service is running and healthy
-- Verify credentials match
+- Check postgres container is running
+- Verify `DATABASE_URL` uses service name `postgres` (not localhost)
+- Check postgres healthcheck passes
 
-### Build Failures
-- Check Dockerfile syntax
-- Ensure `package-lock.json` is committed
-- Review build logs in Dokploy
+### Domain Not Working
+- Verify DNS A record points to server IP
+- Wait for DNS propagation
+- Check SSL certificate in Dokploy logs
 
-### SSL/Domain Issues
-- Verify DNS A record points to Dokploy server IP
-- Wait for DNS propagation (up to 24 hours)
-- Check Let's Encrypt logs for certificate errors
-
-### Container Crashes
-- Check application logs in Dokploy
+### Container Keeps Restarting
+- Check application logs
 - Verify all required environment variables are set
 - Ensure database is accessible
 
 ---
 
-## Updating the Application
+## Updating
 
 To deploy updates:
-
-1. Push changes to the `PROD` branch
-2. In Dokploy, click **"Deploy"** or enable **Auto Deploy** from Git webhooks
-
----
-
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────┐
-│                    Dokploy Server                    │
-├─────────────────────────────────────────────────────┤
-│  ┌──────────────────┐    ┌──────────────────────┐  │
-│  │   gift-platform  │────│  gift-platform-db    │  │
-│  │       -api       │    │    (PostgreSQL)      │  │
-│  │   Port: 3000     │    │    Port: 5432        │  │
-│  └────────┬─────────┘    └──────────────────────┘  │
-│           │                                         │
-├───────────┼─────────────────────────────────────────┤
-│    Traefik Reverse Proxy (SSL/HTTPS)               │
-│           │                                         │
-│  dgift-rgb.rnv.lol:443 → localhost:3000            │
-└───────────┼─────────────────────────────────────────┘
-            │
-      ┌─────▼─────┐
-      │  Internet │
-      │   Users   │
-      └───────────┘
-```
+1. Push changes to `PROD` branch
+2. In Dokploy, click **"Redeploy"** or enable **Auto Deploy**
